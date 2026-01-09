@@ -1,14 +1,19 @@
-from mlopsproject.model import CNN
-from mlopsproject.data import get_data_splits
+from .model import CNN
+from .data import get_data_splits
 from pytorch_lightning import Trainer
 from pytorch_lightning import LightningModule
 import pytorch_lightning as pl
+import wandb
+import hydra
+from omegaconf import DictConfig, OmegaConf
 
-def main():
-    max_epochs = 5
+@hydra.main(config_path="../../configs", config_name="base_config")
+def main(cfg: DictConfig):
+    max_epochs = cfg.epochs
+    lr = cfg.lr
     train_data, validation_data, test_data = get_data_splits()
 
-    model = CNN()
+    model = CNN(lr=lr)
     print("device:", model.device)
     logger = pl.loggers.WandbLogger(project="dtu_mlops")
 
