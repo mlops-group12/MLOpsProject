@@ -209,7 +209,12 @@ __marimo__/
 
 # data
 data/.DS_Store
-data/cifar-10/
+data/Angry
+data/fear
+data/Happy
+data/Sad
+data/Suprise
+
 
 #uv lock
 uv.lock
