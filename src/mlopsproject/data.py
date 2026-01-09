@@ -1,64 +1,53 @@
-from pathlib import Path
-
 import numpy as np
 from torch.utils.data import Subset, DataLoader
-from torchvision.datasets import CIFAR10
-from torchvision.transforms import transforms
+from torchvision import transforms, datasets
 
-DATA_PATH = "data/"
 
-def get_data_splits(seed=0, num_workers=0, train_batch_size=64) -> tuple[DataLoader, DataLoader, DataLoader]: 
-    cifar10_path = Path(DATA_PATH) / "cifar-10"
-
-    transform = transforms.Compose([transforms.ToTensor()])
-
-    if not cifar10_path.exists():
-        cifar10_path.mkdir(parents=True, exist_ok=True)
-
-    # construct new indices
+def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
     np.random.seed(seed)
-    indices = np.random.choice(50000, 50000)
-    train_indices = indices[:40000]
-    validation_indices = indices[40000:]
 
-
-    main_data = CIFAR10(root=cifar10_path, train=True, download=True, transform=transform)
-
-    train_data = Subset(main_data, train_indices)
-    validation_data = Subset(main_data, validation_indices)
-
-    test_data = CIFAR10(
-        root=cifar10_path,
-        train=False,
-        download=True,
-        transform=transform
+    data_transform = transforms.Compose(
+        [
+            transforms.Resize((64, 64)),  # Sizing
+            transforms.Grayscale(),  # Making Black and White
+            transforms.ToTensor(),  # Convert torch tensor
+        ],
     )
 
-    # ------------------------------------------------------------------
-    # convert to dataloaders:
-    # ------------------------------------------------------------------
+    dataset = datasets.ImageFolder(root="data/faces/Data", transform=data_transform)
 
+    # split into indices
+    train_length = int(0.8 * len(dataset))
+    val_length = int(0.1 * len(dataset))
+
+    indices = np.random.choice(len(dataset), len(dataset), replace=False)
+
+    train_dataset = Subset(dataset, indices[:train_length])
+    validation_dataset = Subset(dataset, indices[train_length:val_length])
+    test_dataset = Subset(dataset, indices[val_length:])
+
+    # convert to dataloaders
     train_dataloader = DataLoader(
-        train_data,
+        train_dataset,
         num_workers=num_workers,
         batch_size=train_batch_size,
-        persistent_workers=False,
+        persistent_workers=True,
     )
 
     test_dataloader = DataLoader(
-        test_data,
+        test_dataset,
         num_workers=num_workers,
-        persistent_workers=False,
+        persistent_workers=True,
     )
 
     validation_dataloader = DataLoader(
-        validation_data,
+        validation_dataset,
         num_workers=num_workers,
-        persistent_workers=False,
+        persistent_workers=True,
     )
 
-    return train_dataloader, test_dataloader, validation_dataloader
+    return train_dataloader, validation_dataloader, test_dataloader
+
 
 if __name__ == "__main__":
-    train_data, test_data, validation_data = get_data_splits()
-    pass
+    train_dataloader, validation_dataloader, test_dataloader = get_dataloaders()

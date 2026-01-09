@@ -1,17 +1,16 @@
 from .model import CNN
-from .data import get_data_splits
+from .data import get_dataloaders
 from pytorch_lightning import Trainer
-from pytorch_lightning import LightningModule
 import pytorch_lightning as pl
-import wandb
 import hydra
-from omegaconf import DictConfig, OmegaConf
+from omegaconf import DictConfig
 
-@hydra.main(config_path="../../configs", config_name="base_config")
+
+@hydra.main(config_path="../../configs", config_name="base_config", version_base=1.1)
 def main(cfg: DictConfig):
     max_epochs = cfg.epochs
     lr = cfg.lr
-    train_data, validation_data, test_data = get_data_splits()
+    train_data, validation_data, test_data = get_dataloaders()
 
     model = CNN(learning_rate=lr)
     print("device:", model.device)
@@ -27,7 +26,7 @@ def main(cfg: DictConfig):
     else:
         logger = None
 
-    trainer = Trainer(max_epochs=max_epochs,logger=logger)
+    trainer = Trainer(max_epochs=max_epochs, logger=logger)
     trainer.fit(model, train_dataloaders=train_data, val_dataloaders=validation_data)
     trainer.test(model, dataloaders=test_data)
 
