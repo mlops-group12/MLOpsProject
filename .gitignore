@@ -209,7 +209,6 @@ __marimo__/
 
 # data
 data/.DS_Store
-data/cifar-10/
 
 #uv lock
 uv.lock
