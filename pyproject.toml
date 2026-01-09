@@ -20,6 +20,7 @@ requires-python = ">=3.12"
 dependencies = [
     "fastapi==0.115.6",
     "torch==2.6.0",
+    "torchvision>=0.21.0",
     "typer==0.15.1",
     "uvicorn==0.34.0",
 ]
@@ -55,3 +56,9 @@ line-length = 120
 
 [tool.coverage.run]
 omit = ["tests/*"]
+
+
+[project.scripts]
+preprocess = "mlopsproject.data:main"
+train = "mlopsproject.train:main"
+evaluate ="mlopsproject.evaluate:main"
