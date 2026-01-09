@@ -15,7 +15,17 @@ def main(cfg: DictConfig):
 
     model = CNN(learning_rate=lr)
     print("device:", model.device)
-    logger = pl.loggers.WandbLogger(project="dtu_mlops")
+
+    # setup WandB logger only if enabled
+    if cfg.wandb.enabled:
+        logger = pl.loggers.WandbLogger(
+            project=cfg.wandb.project,
+            entity=cfg.wandb.entity,
+            group=cfg.wandb.group,
+            mode=cfg.wandb.mode,
+        )
+    else:
+        logger = None
 
     trainer = Trainer(max_epochs=max_epochs,logger=logger)
     trainer.fit(model, train_dataloaders=train_data, val_dataloaders=validation_data)
