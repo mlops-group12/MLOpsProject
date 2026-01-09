@@ -1,7 +1,5 @@
 from pathlib import Path
 
-import typer
-import torch
 import numpy as np
 from torch.utils.data import Dataset, Subset
 from torchvision.datasets import CIFAR10
@@ -15,7 +13,7 @@ def get_data_splits(seed=0) -> tuple[Dataset, Dataset]:
         cifar10_path.mkdir()
 
     # construct new indices
-    np.random.seed(0)
+    np.random.seed(seed)
     indices = np.random.choice(50000, 50000)
     train_indices = indices[:40000]
     validation_indices = indices[40000:]
