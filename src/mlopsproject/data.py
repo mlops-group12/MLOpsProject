@@ -7,7 +7,7 @@ from torchvision.transforms import transforms
 
 DATA_PATH = "data/"
 
-def get_data_splits(seed=0, num_workers=9, train_batch_size=64) -> tuple[DataLoader, DataLoader, DataLoader]: 
+def get_data_splits(seed=0, num_workers=0, train_batch_size=64) -> tuple[DataLoader, DataLoader, DataLoader]: 
     cifar10_path = Path(DATA_PATH) / "cifar-10"
 
     transform = transforms.Compose([transforms.ToTensor()])
@@ -42,19 +42,19 @@ def get_data_splits(seed=0, num_workers=9, train_batch_size=64) -> tuple[DataLoa
         train_data,
         num_workers=num_workers,
         batch_size=train_batch_size,
-        persistent_workers=True,
+        persistent_workers=False,
     )
 
     test_dataloader = DataLoader(
         test_data,
         num_workers=num_workers,
-        persistent_workers=True,
+        persistent_workers=False,
     )
 
     validation_dataloader = DataLoader(
         validation_data,
         num_workers=num_workers,
-        persistent_workers=True,
+        persistent_workers=False,
     )
 
     return train_dataloader, test_dataloader, validation_dataloader
