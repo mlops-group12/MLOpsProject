@@ -2,7 +2,7 @@
 # RUN WITH: uv run python -m src.mlopsproject.train
 # or without wandb: python -m src.mlopsproject.train wandb.enabled=false
 wandb:
-  enabled: false          # turn off with wandb.enabled=false
+  enabled: true          # turn off with wandb.enabled=false
   project: MLOps_signe # CHANGE THIS BEFORE RUNNING
   entity: mlops12    # <- W&B team slug
   group: cifar10_${epochs}   # group runs by bottleneck type
@@ -11,7 +11,7 @@ wandb:
 seed: 42
 
 # trainer
-epochs: 5
+epochs: 3
 lr: 4e-4
 device: auto            # "cuda" | "cpu" | "auto"
 
