@@ -1,0 +1,25 @@
+# configs/base_config.yaml
+# RUN WITH: python -m src.mlopsproject.train 
+# or without wandb: python -m src.mlopsproject.train wandb.enabled=false
+wandb:
+  enabled: false          # turn off with wandb.enabled=false
+  project: deep_vae_signe # CHANGE THIS BEFORE RUNNING
+  entity: mlops12    # <- W&B team slug
+  group: cifar10_${epochs}   # group runs by bottleneck type
+  mode: online           # or "offline" / "disabled"
+
+seed: 42
+
+# trainer
+epochs: 5
+lr: 4e-4
+device: auto            # "cuda" | "cpu" | "auto"
+
+# checkpoint saving and loading
+checkpoint_name: "cifar10_epochs${epochs}_lr${lr}_model.pt"
+
+hydra:
+  run:
+    dir: outputs/single/${now:%Y-%m-%d_%H-%M-%S}
+  job:
+    name: train_cifar10
