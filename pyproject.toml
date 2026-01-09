@@ -56,3 +56,9 @@ line-length = 120
 
 [tool.coverage.run]
 omit = ["tests/*"]
+
+
+[project.scripts]
+preprocess = "mlopsproject.data:main"
+train = "mlopsproject.train:main"
+evaluate ="mlopsproject.evaluate:main"
