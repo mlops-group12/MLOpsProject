@@ -16,7 +16,7 @@ def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
     )
     path = os.getcwd()
 
-    path = os.path.join(path, "../../../data/faces/Data")
+    path = os.path.join(path, "../../../data")
 
     dataset = datasets.ImageFolder(root=path, transform=data_transform)
 
