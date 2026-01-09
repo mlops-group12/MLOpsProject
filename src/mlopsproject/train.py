@@ -13,7 +13,7 @@ def main(cfg: DictConfig):
     lr = cfg.lr
     train_data, validation_data, test_data = get_data_splits()
 
-    model = CNN(lr=lr)
+    model = CNN(learning_rate=lr)
     print("device:", model.device)
     logger = pl.loggers.WandbLogger(project="dtu_mlops")
 
