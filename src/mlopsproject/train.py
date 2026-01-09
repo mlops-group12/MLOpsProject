@@ -6,6 +6,10 @@ import pytorch_lightning as pl
 import wandb
 import hydra
 from omegaconf import DictConfig, OmegaConf
+import os
+
+os.environ["WANDB_START_METHOD"] = "thread"
+os.environ["WANDB_DISABLE_SERVICE"] = "true"
 
 @hydra.main(config_path="../../configs", config_name="base_config")
 def main(cfg: DictConfig):

@@ -98,7 +98,7 @@ class CNN(LightningModule):
 
 
     def configure_optimizers(self):
-        return Adam(self.parameters(), lr=self.lr)
+        return optim.Adam(self.parameters(), lr=self.lr)
     
 
 
