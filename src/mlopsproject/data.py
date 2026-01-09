@@ -13,7 +13,7 @@ def get_data_splits(seed=0, num_workers=0, train_batch_size=64) -> tuple[DataLoa
     transform = transforms.Compose([transforms.ToTensor()])
 
     if not cifar10_path.exists():
-        cifar10_path.mkdir()
+        cifar10_path.mkdir(parents=True, exist_ok=True)
 
     # construct new indices
     np.random.seed(seed)
@@ -60,5 +60,5 @@ def get_data_splits(seed=0, num_workers=0, train_batch_size=64) -> tuple[DataLoa
     return train_dataloader, test_dataloader, validation_dataloader
 
 if __name__ == "__main__":
-    train_data, test_data = get_data_splits()
+    train_data, test_data, validation_data = get_data_splits()
     pass

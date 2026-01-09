@@ -213,3 +213,6 @@ data/cifar-10/
 
 #uv lock
 uv.lock
+
+# outputs
+outputs/
