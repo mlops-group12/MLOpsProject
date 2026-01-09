@@ -17,7 +17,7 @@ The goal of this project is to design, implement and evaluate a Convolutional Ne
 The project will be implemented using PyTorch as the core deep learning library. To improve code structure and reduce boilerplate code related to training and validation loops, PyTorch Lightning will be used as a high-level framework built on top of PyTorch. PyTorch Lightning will be integrated into the project to manage training, validation and logging while preserving the underlying PyTorch model definitions.
 
 ## Data
-The project will use the CIFAR-10 dataset, which consists of 60.000 color images of size 32×32 pixels divided into 10 distinct classes. The dataset is split into 40.000 training images, 10.000 validation images and 10.000 test images.
+The project will use the CIFAR-10 dataset, which consists of 60.000 color images of size 32×32 pixels divided into 10 distinct classes. The dataset is split into 40.000 training images, 10.000 validation images and 10.000 test images. Input images will be normalized as part of the preprocessing to ensure numerical stability and effective model training.
 
 ## Model
 The Convolutional Neural Network will be based on common computer vision principles. Initially, the data is passed through several convolutional blocks, including batch-normalization and ReLU. At appropriate places, the blocks will be joined by pooling layers. After this feature extraction, a fully connected network will follow. This will output the aforementioned 10-dimensional output vector, allowing us to obtain class probabilities.
