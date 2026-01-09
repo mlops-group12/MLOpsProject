@@ -42,7 +42,7 @@ class CNN(LightningModule):
             nn.Linear(256, num_classes),
         )
 
-        self.criterium = nn.CrossEntropyLoss()
+        self.criterion = nn.CrossEntropyLoss()
         self.learning_rate = learning_rate
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -53,7 +53,7 @@ class CNN(LightningModule):
     def training_step(self, batch, batch_idx):
         data, target = batch
         preds = self(data)
-        loss = self.criterium(preds, target)
+        loss = self.criterion(preds, target)
         acc = (target == preds.argmax(dim=-1)).float().mean()
         self.log('train_loss', loss, on_epoch=True)
         self.log('val_acc', acc, on_epoch=True)
