@@ -22,7 +22,7 @@ def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
 
     # split into indices
     train_length = int(0.8 * len(dataset))
-    val_length = int(0.1 * len(dataset))
+    val_length = int(0.9 * len(dataset))
 
     indices = np.random.choice(len(dataset), len(dataset), replace=False)
 
