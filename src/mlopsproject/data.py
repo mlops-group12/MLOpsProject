@@ -2,28 +2,20 @@ from pathlib import Path
 
 import typer
 from torch.utils.data import Dataset
+from torchvision.datasets import CIFAR10
 
+DATA_PATH = "data/"
 
-class MyDataset(Dataset):
-    """My custom dataset."""
+def get_data_splits() -> tuple[Dataset, Dataset]: 
+    cifar10_path = Path(DATA_PATH) / 'cifar-10'
 
-    def __init__(self, data_path: Path) -> None:
-        self.data_path = data_path
+    if not cifar10_path.exists():
+        cifar10_path.mkdir()
 
-    def __len__(self) -> int:
-        """Return the length of the dataset."""
+    train_data = CIFAR10(root=cifar10_path, train=True, download=True, transform=None)
+    test_data = CIFAR10(root=cifar10_path, train=False, download=True, transform=None)
 
-    def __getitem__(self, index: int):
-        """Return a given sample from the dataset."""
-
-    def preprocess(self, output_folder: Path) -> None:
-        """Preprocess the raw data and save it to the output folder."""
-
-def preprocess(data_path: Path, output_folder: Path) -> None:
-    print("Preprocessing data...")
-    dataset = MyDataset(data_path)
-    dataset.preprocess(output_folder)
-
+    return train_data, test_data
 
 if __name__ == "__main__":
-    typer.run(preprocess)
+    typer.run(get_data_splits)
