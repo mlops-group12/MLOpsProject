@@ -6,7 +6,7 @@ import hydra
 from omegaconf import DictConfig
 
 
-@hydra.main(config_path="../../configs", config_name="base_config", version_base=1.1)
+@hydra.main(config_path="../../configs", config_name="base_config")
 def main(cfg: DictConfig):
     max_epochs = cfg.epochs
     lr = cfg.lr
