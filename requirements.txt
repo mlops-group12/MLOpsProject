@@ -1,9 +1,9 @@
-
-"""Use requirements.txt to install dependencies via pip if torch via uv does not work for your system."""
 # Core dependencies (match uv pyproject.toml)
 fastapi==0.115.6
 typer==0.15.1
 uvicorn==0.34.0
+numpy==1.26.0
+torchvision==0.18.1
 
 # Dev dependencies (optional, can install separately)
 coverage==7.6.9

@@ -62,3 +62,5 @@ def get_data_splits(seed=0, num_workers=0, train_batch_size=64) -> tuple[DataLoa
 if __name__ == "__main__":
     train_data, test_data = get_data_splits()
     pass
+
+    get_data_splits()
