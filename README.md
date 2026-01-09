@@ -33,8 +33,13 @@ The directory structure of the project looks like this:
 │       └── tests.yaml
 ├── configs/                  # Configuration files
 ├── data/                     # Data directory
-│   └── cifar10
-        └── cifar10 baches
+│   └── cifar-10
+        └── cifar-10-baches-py
+            ├── data_batch_1
+            ├── data_batch_2
+            ├── data_batch_3
+            ├── data_batch_4
+            └── data_batch_5
 ├── dockerfiles/              # Dockerfiles
 │   ├── api.Dockerfile
 │   └── train.Dockerfile
