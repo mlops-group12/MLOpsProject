@@ -1,4 +1,4 @@
-# mlopsproject
+# Convolutional Neural Network classifying objects in CIFAR-10
 
 This repository contains the implementation for our Machine learning operations project at DTU (course 02476), where we implement a Convolutional Neural Network (CNN) capable of classifying objects in images using the CIFAR-10 dataset. Our code and experiments are included in the repository. This project is built using the cookie-cutter template as a standardized structured framework to run the project as simply as possible.
 
@@ -33,8 +33,8 @@ The directory structure of the project looks like this:
 │       └── tests.yaml
 ├── configs/                  # Configuration files
 ├── data/                     # Data directory
-│   ├── processed
-│   └── raw
+│   └── cifar10
+        └── cifar10 baches
 ├── dockerfiles/              # Dockerfiles
 │   ├── api.Dockerfile
 │   └── train.Dockerfile
