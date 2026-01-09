@@ -57,6 +57,7 @@ class CNN(LightningModule):
         )
 
         self.criterion = nn.CrossEntropyLoss()
+        self.lr = learning_rate
 
     def forward(self, x: Tensor) -> Tensor:
         x = self.features(x)

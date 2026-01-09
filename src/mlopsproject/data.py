@@ -1,6 +1,7 @@
 import numpy as np
 from torch.utils.data import Subset, DataLoader
 from torchvision import transforms, datasets
+import os
 
 
 def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
@@ -13,8 +14,11 @@ def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
             transforms.ToTensor(),  # Convert torch tensor
         ],
     )
+    path = os.getcwd()
 
-    dataset = datasets.ImageFolder(root="data/faces/Data", transform=data_transform)
+    path = os.path.join(path, "../../../data")
+
+    dataset = datasets.ImageFolder(root=path, transform=data_transform)
 
     # split into indices
     train_length = int(0.8 * len(dataset))
