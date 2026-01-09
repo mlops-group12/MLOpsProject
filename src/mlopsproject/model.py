@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.optim import Adam
+from torch import Tensor
+from torch import optim
 from pytorch_lightning import LightningModule
 
 class CNN(LightningModule):
@@ -13,7 +14,7 @@ class CNN(LightningModule):
             self,
             num_classes: int = 10,
             learning_rate: float = 1e-4,
-        ):
+        ) -> None:
         super().__init__()
 
         self.features = nn.Sequential(
@@ -45,12 +46,12 @@ class CNN(LightningModule):
         self.criterion = nn.CrossEntropyLoss()
         self.learning_rate = learning_rate
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: Tensor) -> Tensor:
         x = self.features(x)
         x = self.classifier(x)
         return x
-    
-    def training_step(self, batch, batch_idx):
+
+    def training_step(self, batch: tuple[Tensor, Tensor], batch_idx: int) -> Tensor:
         data, target = batch
         preds = self(data)
         loss = self.criterion(preds, target)
@@ -59,8 +60,8 @@ class CNN(LightningModule):
         self.log('val_acc', acc, on_epoch=True)
 
         return loss
-    
-    def validation_step(self, batch) -> None:
+
+    def validation_step(self, batch: tuple[Tensor, Tensor]) -> None:
         data, target = batch
         preds = self(data)
         loss = self.criterion(preds, target)
@@ -68,7 +69,7 @@ class CNN(LightningModule):
         self.log('val_loss', loss, on_epoch=True)
         self.log('val_acc', acc, on_epoch=True)
 
-    def test_step(self, batch) -> None:
+    def test_step(self, batch: tuple[Tensor, Tensor]) -> None:
         data, target = batch
         preds = self(data)
         loss = self.criterion(preds, target)
@@ -76,10 +77,7 @@ class CNN(LightningModule):
         self.log('test_loss', loss, on_epoch=True)
         self.log('test_acc', acc, on_epoch=True)
 
-    
-
-    def configure_optimizers(self):
-        return Adam(self.parameters(), lr=self.learning_rate)
-    
 
 
+    def configure_optimizers(self) -> optim.Optimizer:
+        return optim.Adam(self.parameters(), lr=self.learning_rate)
