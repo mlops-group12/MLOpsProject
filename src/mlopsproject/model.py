@@ -17,18 +17,18 @@ class CNN(LightningModule):
         super().__init__()
 
         self.features = nn.Sequential(
-            nn.Conv2d(3, 32, kernel_size=3, padding=1),   # -> (N, 32, 32, 32)
-            nn.BatchNorm2d(32),
+            nn.Conv2d(3, 4, kernel_size=3, padding=1),   # -> (N, 32, 32, 32)
+            nn.BatchNorm2d(4),
             nn.ReLU(inplace=True),
 
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),  # -> (N, 64, 32, 32)
-            nn.BatchNorm2d(64),
+            nn.Conv2d(4, 8, kernel_size=3, padding=1),  # -> (N, 64, 32, 32)
+            nn.BatchNorm2d(8),
             nn.ReLU(inplace=True),
 
             nn.MaxPool2d(2),                               # -> (N, 64, 16, 16)
 
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),  # -> (N, 128, 16, 16)
-            nn.BatchNorm2d(128),
+            nn.Conv2d(8, 16, kernel_size=3, padding=1),  # -> (N, 128, 16, 16)
+            nn.BatchNorm2d(16),
             nn.ReLU(inplace=True),
 
             nn.MaxPool2d(2),                               # -> (N, 128, 8, 8)
@@ -36,10 +36,10 @@ class CNN(LightningModule):
 
         self.classifier = nn.Sequential(
             nn.Flatten(),                                  # -> (N, 128*8*8)
-            nn.Linear(128 * 8 * 8, 256),
+            nn.Linear(16 * 8 * 8, 64),
             nn.ReLU(inplace=True),
             nn.Dropout(p=0.3),
-            nn.Linear(256, num_classes),
+            nn.Linear(64, num_classes),
         )
 
         self.criterion = nn.CrossEntropyLoss()
