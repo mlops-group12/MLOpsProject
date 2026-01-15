@@ -1,0 +1,51 @@
+# cloudbuild.yaml
+# Build, tag, and push train and evaluate Docker images to Artifact Registry
+
+steps:
+  # -------------------------
+  # 1️⃣ Build the training image
+  # -------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t', 'us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest',
+        '-f', 'train.dockerfile',
+        '.'
+      ]
+
+  # -------------------------
+  # 2️⃣ Push the training image
+  # -------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
+      ]
+
+  # -------------------------
+  # 3️⃣ Build the evaluation image
+  # -------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t', 'us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest',
+        '-f', 'evaluate.dockerfile',
+        '.'
+      ]
+
+  # -------------------------
+  # 4️⃣ Push the evaluation image
+  # -------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
+      ]
+
+images:
+  - 'us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
+  - 'us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'

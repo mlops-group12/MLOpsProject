@@ -229,3 +229,5 @@ wandb/
 
 # Models
 models/
+
+lightning_logs/

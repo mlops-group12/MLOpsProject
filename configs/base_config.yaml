@@ -25,7 +25,7 @@ gcs:
   bucket: "data-face-emotions"       # <- replace with your bucket name
   data_folder: "data"  # folder with training images
   model_folder: "models"         # folder to save trained models
-  use_mounted_path: true          # if True, check for /gcs/... mount first
+  use_mounted_path: false          # if True, check for /gcs/... mount first
 
 hydra:
   run:

@@ -14,6 +14,8 @@ import torch
 from omegaconf import DictConfig
 import os
 from google.cloud import storage
+import wandb
+import datetime
 
 
 @hydra.main(
@@ -42,26 +44,15 @@ def main(cfg: DictConfig):
     """
     max_epochs = cfg.epochs
     lr = cfg.lr
-
-    # -------------------------
-    # Load data
-    # -------------------------
-    # Added GCS integration: use bucket/folder if available
     train_data, validation_data, _ = get_dataloaders(
-        local_path="data",                     # fallback local path
         gcs_bucket=cfg.gcs.bucket,
         gcs_folder=cfg.gcs.data_folder
     )
 
-    # -------------------------
-    # Initialize model
-    # -------------------------
     model = CNN(learning_rate=lr)
     print("device:", model.device)
 
-    # -------------------------
-    # Setup WandB logger
-    # -------------------------
+    # setup WandB logger only if enabled
     if cfg.wandb.enabled:
         logger = pl.loggers.WandbLogger(
             project=cfg.wandb.project,
@@ -72,34 +63,40 @@ def main(cfg: DictConfig):
     else:
         logger = None
 
-    # -------------------------
-    # Train
-    # -------------------------
     trainer = Trainer(max_epochs=max_epochs, logger=logger)
     trainer.fit(model, train_dataloaders=train_data, val_dataloaders=validation_data)
 
     # -------------------------
-    # Save model locally and to GCS
+    # Model versioning (auto)
     # -------------------------
+    model_version = os.getenv("MODEL_VERSION")
+    if model_version is None:
+        # Auto-generate timestamped version if not set
+        model_version = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    print(f"Using MODEL_VERSION = {model_version}")
+
+    # Local model path with version
+    local_model_path = f"models/model_{model_version}.pt"
+    os.makedirs(os.path.dirname(local_model_path), exist_ok=True)
+
+    # Save model locally
     if cfg.save_model:
-        # Save locally
-        local_model_path = "models/model_weights_latest.pt"
-        os.makedirs(os.path.dirname(local_model_path), exist_ok=True)
         torch.save(model.state_dict(), local_model_path)
         print(f"Model saved locally at {local_model_path}")
 
-        # Save to GCS (only add if cfg.gcs.bucket is defined)
-        if cfg.gcs.bucket and cfg.gcs.model_folder:
-            client = storage.Client()
-            bucket = client.bucket(cfg.gcs.bucket)
+    # Upload to GCS if bucket configured
+    if cfg.gcs.bucket and cfg.gcs.model_folder:
+        client = storage.Client()
+        bucket = client.bucket(cfg.gcs.bucket)
+        blob = bucket.blob(f"{cfg.gcs.model_folder}/model_{model_version}.pt")
+        blob.upload_from_filename(local_model_path)
+        print(f"Model uploaded to GCS at gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model_{model_version}.pt")
 
-            # Use MODEL_VERSION env var if set, else default to 'latest'
-            model_version = os.getenv("MODEL_VERSION", "latest")
-            blob_path = f"{cfg.gcs.model_folder}/model_{model_version}.pt"
-            blob = bucket.blob(blob_path)
-            blob.upload_from_filename(local_model_path)
-
-            print(f"Model uploaded to GCS at gs://{cfg.gcs.bucket}/{blob_path}")
+    # -------------------------
+    # Log model version to WandB
+    # -------------------------
+    if cfg.wandb.enabled:
+        wandb.run.name = f"faces_{model_version}"
 
 
 if __name__ == "__main__":
