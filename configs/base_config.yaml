@@ -1,23 +1,31 @@
 # configs/base_config.yaml
 # RUN WITH: uv run python -m src.mlopsproject.train
 # or without wandb: python -m src.mlopsproject.train wandb.enabled=false
+
 wandb:
-  enabled: true          # turn off with wandb.enabled=false
-  project: MLOps_jacob # CHANGE THIS BEFORE RUNNING
-  entity: mlops12    # <- W&B team slug
-  group: faces_${epochs}   # group runs by bottleneck type
-  mode: online           # or "offline" / "disabled"
+  enabled: true
+  project: MLOps_jacob
+  entity: mlops12
+  group: faces_${epochs}
+  mode: online
 
 seed: 42
 
 # trainer
 epochs: 1
 lr: 4e-4
-device: auto            # "cuda" | "cpu" | "auto"
+device: auto
 save_model: True
 
 # checkpoint saving and loading
 #checkpoint_name: "faces_epochs${epochs}_lr${lr}_model.pt"
+
+# GCS configuration for cross-platform data & model storage
+gcs:
+  bucket: "data-face-emotions"       # <- replace with your bucket name
+  data_folder: "data"  # folder with training images
+  model_folder: "models"         # folder to save trained models
+  use_mounted_path: true          # if True, check for /gcs/... mount first
 
 hydra:
   run:
