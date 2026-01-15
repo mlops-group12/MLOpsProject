@@ -16,19 +16,24 @@ def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
     )
     path = os.getcwd()
 
-    path = os.path.join(path, "../../../data")
+    path = os.path.join(path,"data")
 
     dataset = datasets.ImageFolder(root=path, transform=data_transform)
 
     # split into indices
     train_length = int(0.8 * len(dataset))
+    
     val_length = int(0.9 * len(dataset))
+    
 
     indices = np.random.choice(len(dataset), len(dataset), replace=False)
 
     train_dataset = Subset(dataset, indices[:train_length])
     validation_dataset = Subset(dataset, indices[train_length:val_length])
     test_dataset = Subset(dataset, indices[val_length:])
+    print("Number of training samples:", len(train_dataset))
+    print("Number of validation samples:", len(validation_dataset))
+    print("Number of test samples:", len(test_dataset))
 
     # convert to dataloaders
     train_dataloader = DataLoader(
