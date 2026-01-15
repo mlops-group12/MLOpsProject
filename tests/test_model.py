@@ -27,3 +27,16 @@ class TestModel:
         y = torch.randn(1, 5)
         y = model.validation_step((x, y))
         assert y is None
+
+    def test_test_step(self):
+        model = CNN()
+        x = torch.randn(1, 1, *self.input_size)
+        y = torch.randn(1, 5)
+        y = model.test_step((x, y))
+        assert y is None
+
+    def test_configure_optimizers(self):
+        model = CNN()
+        optimizer = model.configure_optimizers()
+
+        assert isinstance(optimizer, torch.optim.Adam)
