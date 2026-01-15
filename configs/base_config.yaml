@@ -3,7 +3,7 @@
 # or without wandb: python -m src.mlopsproject.train wandb.enabled=false
 wandb:
   enabled: true          # turn off with wandb.enabled=false
-  project: MLOps_signe # CHANGE THIS BEFORE RUNNING
+  project: MLOps_jacob # CHANGE THIS BEFORE RUNNING
   entity: mlops12    # <- W&B team slug
   group: faces_${epochs}   # group runs by bottleneck type
   mode: online           # or "offline" / "disabled"
@@ -17,7 +17,7 @@ device: auto            # "cuda" | "cpu" | "auto"
 save_model: True
 
 # checkpoint saving and loading
-checkpoint_name: "faces_epochs${epochs}_lr${lr}_model.pt"
+#checkpoint_name: "faces_epochs${epochs}_lr${lr}_model.pt"
 
 hydra:
   run:

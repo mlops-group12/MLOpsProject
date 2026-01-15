@@ -11,11 +11,9 @@ COPY pyproject.toml pyproject.toml
 COPY README.md README.md
 COPY src/ src/
 COPY data/ data/
+COPY configs /configs
 
 
-WORKDIR /
 RUN uv sync --locked --no-cache --no-install-project
 
-
-ENTRYPOINT ["python", "-u", "src/mlopsproject/train.py"]
-
+ENTRYPOINT ["uv", "run", "python", "-m", "src.mlopsproject.evaluate"]
