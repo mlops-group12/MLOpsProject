@@ -1,3 +1,10 @@
+"""
+Model Training Module
+
+This module provides functionality for training CNN models using PyTorch Lightning.
+It handles data loading, model initialization, training loop, and model checkpointing.
+"""
+
 from mlopsproject.model import CNN
 from mlopsproject.data import get_dataloaders
 from pytorch_lightning import Trainer
@@ -13,6 +20,24 @@ from omegaconf import DictConfig
     version_base=None,
 )
 def main(cfg: DictConfig):
+    """
+    Train a CNN model on the dataset.
+
+    This function orchestrates the training process:
+    1. Loads and prepares data (train/validation splits)
+    2. Initializes the CNN model with specified hyperparameters
+    3. Sets up optional WandB logging
+    4. Trains the model using PyTorch Lightning
+    5. Saves model weights if configured
+
+    Args:
+        cfg (DictConfig): Hydra configuration object.
+
+    Note:
+        - Model weights are saved to 'models/model_weights_latest.pt' if save_model is True
+        - Training and validation metrics are logged via PyTorch Lightning
+        - If WandB is enabled, metrics are also logged to WandB
+    """
     max_epochs = cfg.epochs
     lr = cfg.lr
     train_data, validation_data, _ = get_dataloaders()

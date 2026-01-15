@@ -18,4 +18,3 @@ RUN uv sync --locked --no-cache --no-install-project
 
 
 ENTRYPOINT ["python", "-u", "src/mlopsproject/train.py"]
-

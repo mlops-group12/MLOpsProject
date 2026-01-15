@@ -1,3 +1,10 @@
+"""
+Model Evaluation Module
+
+This module provides functionality for evaluating trained models on test data.
+It loads a saved model checkpoint and computes test metrics using PyTorch Lightning.
+"""
+
 import sys
 
 from mlopsproject.model import CNN
@@ -16,6 +23,20 @@ from mlopsproject.visualize import plot_confusion_matrix
     version_base=None,
 )
 def main(cfg: DictConfig):
+    """
+    Evaluate a trained CNN model on test data.
+
+    This function loads a saved model checkpoint from 'models/model_weights_latest.pt',
+    evaluates it on the test dataset, and logs metrics. Optionally logs to Weights & Biases
+    if enabled in the configuration.
+
+    Args:
+        cfg (DictConfig): Hydra configuration object
+
+    Raises:
+        SystemExit: Exits with code 0 if model weights file is not found.
+
+    """
     _, _, test_data = get_dataloaders()
 
     model = CNN()
