@@ -1,41 +1,42 @@
-# cloudbuild.yaml
-# Build, tag, and push train and evaluate Docker images to Artifact Registry
-# Unified timestamp across images and model versions
-# Location: europe-west1
-
 steps:
   # -------------------------
-  # 1️⃣ Build & push train + evaluate images in one step
+  # 1️⃣ Build & push train image
   # -------------------------
   - name: 'gcr.io/cloud-builders/docker'
-    entrypoint: 'bash'
     args:
-      - '-c'
-      - |
-        # Create a timestamp: YYYYMMDD_HHMMSS
-        MODEL_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-        echo "Unified timestamp for this build: $MODEL_TIMESTAMP"
+      [
+        'build',
+        '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest',
+        '-f', 'dockerfiles/train.dockerfile',
+        '.'
+      ]
 
-        # -------------------------
-        # Build & push train image
-        # -------------------------
-        echo "Building train image..."
-        docker build \
-          --build-arg MODEL_TIMESTAMP=$MODEL_TIMESTAMP \
-          -t europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$MODEL_TIMESTAMP \
-          -f dockerfiles/train.dockerfile .
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
+      ]
 
-        docker push europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$MODEL_TIMESTAMP
+  # -------------------------
+  # 2️⃣ Build & push evaluate image
+  # -------------------------
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'build',
+        '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest',
+        '-f', 'dockerfiles/evaluate.dockerfile',
+        '.'
+      ]
 
-        # -------------------------
-        # Build & push evaluate image
-        # -------------------------
-        echo "Building evaluate image..."
-        docker build \
-          --build-arg MODEL_TIMESTAMP=$MODEL_TIMESTAMP \
-          -t europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$MODEL_TIMESTAMP \
-          -f dockerfiles/evaluate.dockerfile .
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      [
+        'push',
+        'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
+      ]
 
-        docker push europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$MODEL_TIMESTAMP
-
-# Note: 'images' section is omitted because tags are dynamic
+images:
+  - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
+  - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
