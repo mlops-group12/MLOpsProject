@@ -14,7 +14,9 @@ import pytorch_lightning as pl
 import hydra
 from omegaconf import DictConfig
 import torch
-from mlopsproject.visualize import plot_confusion_matrix
+from mlopsproject.visualize import plot_confusion_matrix, plot_example_predictions
+import matplotlib.pyplot as plt
+import wandb
 
 
 @hydra.main(
@@ -69,12 +71,15 @@ def main(cfg: DictConfig):
 
     class_names = ["angry", "fear", "happy", "sad", "surprise"]
 
-    plot_confusion_matrix(
+    conf_fig =plot_confusion_matrix(
         preds,
         targets,
         class_names,
         normalize=False,
     )
+
+    wandb.log({"confusion_matrix": wandb.Image(conf_fig)})
+    plt.close(conf_fig)
 
     plot_confusion_matrix(
         preds,
@@ -83,6 +88,6 @@ def main(cfg: DictConfig):
         normalize=True,
     )
 
-
+    
 if __name__ == "__main__":
     main()
