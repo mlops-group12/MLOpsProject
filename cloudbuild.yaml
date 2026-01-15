@@ -32,10 +32,11 @@ steps:
         MODEL_TIMESTAMP=$(cat timestamp.txt)
         echo "Building train image with tag: $MODEL_TIMESTAMP"
 
+        # Build & push train image
         docker build \
           --build-arg MODEL_TIMESTAMP=$MODEL_TIMESTAMP \
           -t us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$MODEL_TIMESTAMP \
-          -f train.dockerfile .
+          -f dockerfiles/train.dockerfile .
 
         docker push us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$MODEL_TIMESTAMP
 
@@ -53,7 +54,7 @@ steps:
         docker build \
           --build-arg MODEL_TIMESTAMP=$MODEL_TIMESTAMP \
           -t us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$MODEL_TIMESTAMP \
-          -f evaluate.dockerfile .
+          -f dockerfiles/evaluate.dockerfile .
 
         docker push us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$MODEL_TIMESTAMP
 
