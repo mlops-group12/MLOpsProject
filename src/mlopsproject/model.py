@@ -93,3 +93,21 @@ class CNN(LightningModule):
 
     def configure_optimizers(self):
         return optim.Adam(self.parameters(), lr=self.lr)
+    
+    def on_test_start(self):
+        self.test_preds = []
+        self.test_targets = []
+
+    def test_step(self, batch, batch_idx):
+        data, target = batch
+        preds = self(data)
+
+        self.test_preds.append(preds.argmax(dim=-1).cpu())
+        self.test_targets.append(target.cpu())
+
+        loss = self.criterion(preds, target)
+        acc = (target == preds.argmax(dim=-1)).float().mean()
+
+        self.log("test_loss", loss, on_epoch=True)
+        self.log("test_acc", acc, on_epoch=True)
+

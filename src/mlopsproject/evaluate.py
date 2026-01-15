@@ -7,6 +7,7 @@ import pytorch_lightning as pl
 import hydra
 from omegaconf import DictConfig
 import torch
+from mlopsproject.visualize import plot_confusion_matrix
 
 
 @hydra.main(
@@ -40,6 +41,26 @@ def main(cfg: DictConfig):
     # run testing
     _ = trainer.test(model, dataloaders=test_data)
     # should return a dictionary of logged items
+
+    # ---- CONFUSION MATRIX ----
+    preds = torch.cat(model.test_preds)
+    targets = torch.cat(model.test_targets)
+
+    class_names = ["angry", "fear", "happy", "sad", "surprise"]
+
+    plot_confusion_matrix(
+        preds,
+        targets,
+        class_names,
+        normalize=False,
+    )
+
+    plot_confusion_matrix(
+        preds,
+        targets,
+        class_names,
+        normalize=True,
+    )
 
 
 if __name__ == "__main__":
