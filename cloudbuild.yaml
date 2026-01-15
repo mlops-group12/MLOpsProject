@@ -1,12 +1,20 @@
+# cloudbuild.yaml
+# Build and push train + evaluate Docker images to Artifact Registry
+# Using explicit dir: to handle Dockerfiles in subfolders
+# Registry: europe-west1
+
 steps:
-  # Build & push train image
+  # -------------------------
+  # 1️⃣ Build & push train image
+  # -------------------------
   - name: 'gcr.io/cloud-builders/docker'
+    dir: 'dockerfiles'
     args:
       [
         'build',
-        '-f', 'dockerfiles/train.dockerfile',
+        '-f', 'train.dockerfile',
         '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest',
-        '.'   # <-- build context should be repo root
+        '.'  # context is dockerfiles/
       ]
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -16,14 +24,17 @@ steps:
         'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
       ]
 
-  # Build & push evaluate image
+  # -------------------------
+  # 2️⃣ Build & push evaluate image
+  # -------------------------
   - name: 'gcr.io/cloud-builders/docker'
+    dir: 'dockerfiles'
     args:
       [
         'build',
-        '-f', 'dockerfiles/evaluate.dockerfile',
+        '-f', 'evaluate.dockerfile',
         '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest',
-        '.'   # <-- build context should be repo root
+        '.'  # context is dockerfiles/
       ]
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -33,6 +44,7 @@ steps:
         'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
       ]
 
+# Optional: list images for Cloud Build
 images:
   - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
   - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
