@@ -24,6 +24,10 @@ jobs:
       run: |
         uv sync --dev
 
+    - name: Run pre-commit hooks
+      run: |
+        uv run pre-commit run --all-files
+
     - name: Test with pytest
       run: |
         uv run pytest -v
