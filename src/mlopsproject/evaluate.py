@@ -69,8 +69,14 @@ def main(cfg: DictConfig):
     # -------------------------
     # Select latest model
     # -------------------------
-    local_models = glob.glob("models/model_*.pt")
-    local_model_path = max(local_models, key=os.path.getctime) if local_models else None
+    model_version = os.getenv("MODEL_TIMESTAMP")
+    if model_version:
+        local_model_path = f"models/model_{model_version}.pt"
+    else:
+        # fallback: pick latest if timestamp not provided
+        local_models = glob.glob("models/model_*.pt")
+        local_model_path = max(local_models, key=os.path.getctime) if local_models else None
+
 
     gcs_model_path = None
     if cfg.gcs.bucket and cfg.gcs.model_folder:

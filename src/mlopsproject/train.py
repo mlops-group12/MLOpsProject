@@ -69,10 +69,11 @@ def main(cfg: DictConfig):
     # -------------------------
     # Model versioning (auto)
     # -------------------------
-    model_version = os.getenv("MODEL_VERSION")
+    model_version = os.getenv("MODEL_TIMESTAMP")
     if model_version is None:
-        # Auto-generate timestamped version if not set
+        # Fallback in case not provided
         model_version = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+
     print(f"Using MODEL_VERSION = {model_version}")
 
     # Local model path with version

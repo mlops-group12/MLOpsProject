@@ -1,50 +1,60 @@
 # cloudbuild.yaml
 # Build, tag, and push train and evaluate Docker images to Artifact Registry
-# Timestamp-based versioning for reproducibility
+# Unified timestamp across images and model versions
 
 steps:
   # -------------------------
-  # 1️⃣ Build & push the training image with timestamp
+  # 1️⃣ Generate a unified timestamp
+  # -------------------------
+  - name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Create a timestamp: YYYYMMDD_HHMMSS
+        export MODEL_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+        echo "Unified timestamp for this build: $MODEL_TIMESTAMP"
+
+        # Save it to a file to pass to subsequent steps
+        echo $MODEL_TIMESTAMP > timestamp.txt
+
+        # Make timestamp available for next steps
+        echo "MODEL_TIMESTAMP=$MODEL_TIMESTAMP"
+
+  # -------------------------
+  # 2️⃣ Build & push train image
   # -------------------------
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        # Generate timestamp: YYYYMMDD_HHMMSS
-        timestamp=$(date +%Y%m%d_%H%M%S)
-        echo "Building train image with tag: $timestamp"
+        MODEL_TIMESTAMP=$(cat timestamp.txt)
+        echo "Building train image with tag: $MODEL_TIMESTAMP"
 
-        # Build train image
         docker build \
-          -t us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$timestamp \
+          --build-arg MODEL_TIMESTAMP=$MODEL_TIMESTAMP \
+          -t us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$MODEL_TIMESTAMP \
           -f train.dockerfile .
 
-        # Push train image
-        docker push us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$timestamp
+        docker push us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$MODEL_TIMESTAMP
 
   # -------------------------
-  # 2️⃣ Build & push the evaluation image with timestamp
+  # 3️⃣ Build & push evaluate image
   # -------------------------
   - name: 'gcr.io/cloud-builders/docker'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        # Generate timestamp: YYYYMMDD_HHMMSS
-        timestamp=$(date +%Y%m%d_%H%M%S)
-        echo "Building evaluate image with tag: $timestamp"
+        MODEL_TIMESTAMP=$(cat timestamp.txt)
+        echo "Building evaluate image with tag: $MODEL_TIMESTAMP"
 
-        # Build evaluate image
         docker build \
-          -t us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$timestamp \
+          --build-arg MODEL_TIMESTAMP=$MODEL_TIMESTAMP \
+          -t us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$MODEL_TIMESTAMP \
           -f evaluate.dockerfile .
 
-        # Push evaluate image
-        docker push us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$timestamp
+        docker push us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:$MODEL_TIMESTAMP
 
-# -------------------------
-# Optional: images field removed
-# -------------------------
-# Since tags are dynamic (timestamps), the 'images:' section cannot list exact tags.
-# You can leave it out or list generic references if desired.
+# Note: 'images' section is omitted because tags are dynamic
