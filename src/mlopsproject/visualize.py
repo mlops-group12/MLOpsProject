@@ -12,8 +12,12 @@ def plot_confusion_matrix(
     normalize: bool = False,
 ):
     """
-    preds, targets: 1D tensors on CPU
+    preds, targets: 1D tensors on CPU (or will be moved to CPU)
+    Returns: matplotlib.figure.Figure
     """
+    preds = preds.detach().cpu()
+    targets = targets.detach().cpu()
+
     cm = confusion_matrix(targets, preds)
 
     if normalize:
@@ -24,7 +28,7 @@ def plot_confusion_matrix(
         fmt = "d"
         title = "Confusion Matrix"
 
-    plt.figure(figsize=(7, 6))
+    fig, ax = plt.subplots(figsize=(7, 6))
     sns.heatmap(
         cm,
         annot=True,
@@ -32,12 +36,14 @@ def plot_confusion_matrix(
         cmap="Blues",
         xticklabels=class_names,
         yticklabels=class_names,
+        ax=ax,
     )
-    plt.xlabel("Predicted")
-    plt.ylabel("True")
-    plt.title(title)
-    plt.tight_layout()
-    plt.show()
+    ax.set_xlabel("Predicted")
+    ax.set_ylabel("True")
+    ax.set_title(title)
+    fig.tight_layout()
+
+    return fig
 
 
 def plot_example_predictions(
@@ -51,18 +57,22 @@ def plot_example_predictions(
     images: (N, 1, H, W) tensor on CPU
     preds, targets: 1D tensors on CPU
     """
-    plt.figure(figsize=(2 * n, 3))
+    images = images.detach().cpu()
+    preds = preds.detach().cpu()
+    targets = targets.detach().cpu()
+
+    fig, axes = plt.subplots(1, n, figsize=(2 * n, 3))
 
     for i in range(n):
-        plt.subplot(1, n, i + 1)
-        plt.imshow(images[i][0], cmap="gray")
-        plt.axis("off")
+        ax = axes[i]
+        ax.imshow(images[i][0], cmap="gray")
+        ax.axis("off")
 
         pred_name = class_names[preds[i]]
         target_name = class_names[targets[i]]
 
         color = "green" if preds[i] == targets[i] else "red"
-        plt.title(f"P: {pred_name}\nT: {target_name}", color=color, fontsize=9)
+        ax.set_title(f"P: {pred_name}\nT: {target_name}", color=color, fontsize=9)
 
-    plt.tight_layout()
-    plt.show()
+    fig.tight_layout()
+    return fig
