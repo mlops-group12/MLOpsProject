@@ -12,14 +12,11 @@ steps:
       - '-c'
       - |
         # Create a timestamp: YYYYMMDD_HHMMSS
-        export MODEL_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+        MODEL_TIMESTAMP=$(date +%Y%m%d_%H%M%S)
         echo "Unified timestamp for this build: $MODEL_TIMESTAMP"
 
         # Save it to a file to pass to subsequent steps
         echo $MODEL_TIMESTAMP > timestamp.txt
-
-        # Make timestamp available for next steps
-        echo "MODEL_TIMESTAMP=$MODEL_TIMESTAMP"
 
   # -------------------------
   # 2️⃣ Build & push train image
@@ -32,7 +29,6 @@ steps:
         MODEL_TIMESTAMP=$(cat timestamp.txt)
         echo "Building train image with tag: $MODEL_TIMESTAMP"
 
-        # Build & push train image
         docker build \
           --build-arg MODEL_TIMESTAMP=$MODEL_TIMESTAMP \
           -t us-central1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:$MODEL_TIMESTAMP \
