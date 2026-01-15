@@ -11,13 +11,13 @@ wandb:
 seed: 42
 
 # trainer
-epochs: 1
+epochs: 3
 lr: 4e-4
 device: auto            # "cuda" | "cpu" | "auto"
 save_model: True
 
 # checkpoint saving and loading
-checkpoint_name: "faces_epochs${epochs}_lr${lr}_model.pt"
+#checkpoint_name: "faces_epochs${epochs}_lr${lr}_model.pt"
 
 hydra:
   run:
