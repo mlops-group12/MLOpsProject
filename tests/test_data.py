@@ -4,16 +4,32 @@ from mlopsproject.data import get_dataloaders
 import os
 
 path = os.getcwd()
-    
-path = os.path.join(path,"data")
+
+path = os.path.join(path, "data")
+
+
+@pytest.fixture
+def fixture_get_dataloaders():
+    train_dataloader, validation_dataloader, test_dataloader = get_dataloaders()
+    return train_dataloader, validation_dataloader, test_dataloader
+
+
+@pytest.fixture
+def fixture_get_datasets(fixture_get_dataloaders):
+    train_dataloader, validation_dataloader, test_dataloader = fixture_get_dataloaders
+
+    return (
+        train_dataloader.dataset,
+        validation_dataloader.dataset,
+        test_dataloader.dataset,
+    )
+
 
 @pytest.mark.skipif(not os.path.exists(path), reason="Processed data not found")
-def test_my_dataset():
-    train_dataloader, validation_dataloader, test_dataloader = get_dataloaders()
-
-    train_dataset = train_dataloader.dataset
-    val_dataset = validation_dataloader.dataset
-    test_dataset = test_dataloader.dataset
+def test_my_dataset(fixture_get_datasets):
+    train_dataset = fixture_get_datasets[0]
+    val_dataset = fixture_get_datasets[1]
+    test_dataset = fixture_get_datasets[2]
 
     assert isinstance(train_dataset, Dataset)
     assert isinstance(val_dataset, Dataset)
@@ -25,14 +41,10 @@ def test_my_dataset():
     print("Dataset length test passed.")
 
 
-def test_my_dataloader_batch_shape():
-    train_dataloader, _, _ = get_dataloaders()
-
-    x, y = next(iter(train_dataloader))
+def test_my_dataloader_batch_shape(fixture_get_dataloaders):
+    x, y = next(iter(fixture_get_dataloaders[0]))
 
     assert x.ndim == 4, f"Expected 4D tensor, got {x.ndim}D"
     assert x.shape[1:] == (1, 64, 64), f"Expected (*, 1, 64, 64), got {x.shape}"
 
     print("Dataloader batch shape test passed.")
-
-
