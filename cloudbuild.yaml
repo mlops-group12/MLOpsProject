@@ -1,19 +1,12 @@
-# cloudbuild.yaml
-# Build and push train + evaluate Docker images to Artifact Registry
-# Using explicit Dockerfile paths to avoid lstat errors
-# Registry: europe-west1
-
 steps:
-  # -------------------------
-  # 1️⃣ Build & push train image
-  # -------------------------
+  # Build & push train image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'build',
         '-f', 'dockerfiles/train.dockerfile',
         '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest',
-        './dockerfiles'
+        '.'   # <-- build context should be repo root
       ]
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -23,16 +16,14 @@ steps:
         'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
       ]
 
-  # -------------------------
-  # 2️⃣ Build & push evaluate image
-  # -------------------------
+  # Build & push evaluate image
   - name: 'gcr.io/cloud-builders/docker'
     args:
       [
         'build',
         '-f', 'dockerfiles/evaluate.dockerfile',
         '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest',
-        './dockerfiles'
+        '.'   # <-- build context should be repo root
       ]
 
   - name: 'gcr.io/cloud-builders/docker'
@@ -42,7 +33,6 @@ steps:
         'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
       ]
 
-# Optional: list images for Cloud Build
 images:
   - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
   - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
