@@ -1,3 +1,10 @@
+"""
+Data Loading Module
+
+This module provides utilities for loading and preprocessing image data,
+creating train/validation/test splits, and generating PyTorch DataLoaders.
+"""
+
 import numpy as np
 from torch.utils.data import Subset, DataLoader
 from torchvision import transforms, datasets
@@ -5,6 +12,23 @@ import os
 
 
 def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
+    """
+    Create train, validation, and test DataLoaders from image folder dataset.
+
+    Args:
+        seed (int, optional): Random seed for reproducibility. Defaults to 0.
+        num_workers (int, optional): Number of worker processes for data loading.
+            Defaults to 9.
+        train_batch_size (int, optional): Batch size for training DataLoader.
+            Defaults to 64.
+
+    Returns:
+        tuple: A tuple containing three DataLoaders:
+            - train_dataloader: DataLoader for training data
+            - validation_dataloader: DataLoader for validation data
+            - test_dataloader: DataLoader for test data
+
+    """
     np.random.seed(seed)
 
     data_transform = transforms.Compose(

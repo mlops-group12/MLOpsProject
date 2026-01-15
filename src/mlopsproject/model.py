@@ -1,3 +1,10 @@
+"""
+Model Definition Module
+
+This module contains the CNN model architecture for image classification.
+The model is implemented as a PyTorch Lightning module for easy training and evaluation.
+"""
+
 import torch.nn as nn
 from torch import Tensor
 from torch import optim
@@ -7,9 +14,15 @@ import torch
 
 class CNN(LightningModule):
     """
-    Grayscale emotion classifier
-    Input:  (N, 1, 64, 64)
-    Output: (N, 5)
+    Convolutional Neural Network for grayscale emotion classification.
+
+    Architecture:
+        - Feature extractor: 3 convolutional blocks with batch normalization
+          and max pooling, reducing spatial dimensions from 64x64 to 8x8
+        - Classifier: Fully connected layers with dropout for regularization
+
+    Input shape:  (N, 1, 64, 64) - Batch of grayscale images
+    Output shape: (N, 5) - Logits for 5 emotion classes
     """
 
     def __init__(
@@ -17,6 +30,14 @@ class CNN(LightningModule):
         num_classes: int = 5,
         learning_rate: float = 1e-4,
     ) -> None:
+        """
+        Initialize the CNN model.
+
+        Args:
+            num_classes (int, optional): Number of output classes. Defaults to 5.
+            learning_rate (float, optional): Learning rate for the optimizer.
+                Defaults to 1e-4.
+        """
         super().__init__()
         self.save_hyperparameters()
 
@@ -61,11 +82,30 @@ class CNN(LightningModule):
         self.lr = learning_rate
 
     def forward(self, x: Tensor) -> Tensor:
+        """
+        Forward pass through the network.
+
+        Args:
+            x (Tensor): Input tensor of shape (N, 1, 64, 64)
+
+        Returns:
+            Tensor: Output logits of shape (N, num_classes)
+        """
         x = self.features(x)
         x = self.classifier(x)
         return x
 
     def training_step(self, batch: tuple[Tensor, Tensor], batch_idx: int) -> Tensor:
+        """
+        Training step for PyTorch Lightning.
+
+        Args:
+            batch (tuple[Tensor, Tensor]): Tuple of (data, target) tensors
+            batch_idx (int): Index of the current batch
+
+        Returns:
+            Tensor: Training loss value
+        """
         data, target = batch
         preds = self(data)
         loss = self.criterion(preds, target)
@@ -76,6 +116,12 @@ class CNN(LightningModule):
         return loss
 
     def validation_step(self, batch: tuple[Tensor, Tensor]) -> None:
+        """
+        Validation step for PyTorch Lightning.
+
+        Args:
+            batch (tuple[Tensor, Tensor]): Tuple of (data, target) tensors
+        """
         data, target = batch
         preds = self(data)
         loss = self.criterion(preds, target)
@@ -84,6 +130,12 @@ class CNN(LightningModule):
         self.log("val_acc", acc, on_epoch=True)
 
     def test_step(self, batch: tuple[Tensor, Tensor]) -> None:
+        """
+        Test step for PyTorch Lightning.
+
+        Args:
+            batch (tuple[Tensor, Tensor]): Tuple of (data, target) tensors
+        """
         data, target = batch
         preds = self(data)
         loss = self.criterion(preds, target)
@@ -92,4 +144,10 @@ class CNN(LightningModule):
         self.log("test_acc", acc, on_epoch=True)
 
     def configure_optimizers(self):
+        """
+        Configure the optimizer for PyTorch Lightning.
+
+        Returns:
+            optim.Adam: Adam optimizer with the configured learning rate
+        """
         return optim.Adam(self.parameters(), lr=self.lr)
