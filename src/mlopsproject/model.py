@@ -21,23 +21,24 @@ class CNN(LightningModule):
         self.save_hyperparameters()
 
         # Feature extractor: 64x64 -> 32x32 -> 16x16 -> 8x8
+        filter_coef = 4
         self.features = nn.Sequential(
-            nn.Conv2d(1, 32, kernel_size=3, padding=1),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(1, filter_coef, kernel_size=3, padding=1),
+            nn.BatchNorm2d(filter_coef),
             nn.ReLU(inplace=True),
-            nn.Conv2d(32, 32, kernel_size=3, padding=1),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(filter_coef, filter_coef, kernel_size=3, padding=1),
+            nn.BatchNorm2d(filter_coef),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2),  # 64 -> 32
-            nn.Conv2d(32, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
+            nn.Conv2d(filter_coef, filter_coef * 2, kernel_size=3, padding=1),
+            nn.BatchNorm2d(filter_coef * 2),
             nn.ReLU(inplace=True),
-            nn.Conv2d(64, 64, kernel_size=3, padding=1),
-            nn.BatchNorm2d(64),
+            nn.Conv2d(filter_coef * 2, filter_coef * 2, kernel_size=3, padding=1),
+            nn.BatchNorm2d(filter_coef * 2),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2),  # 32 -> 16
-            nn.Conv2d(64, 128, kernel_size=3, padding=1),
-            nn.BatchNorm2d(128),
+            nn.Conv2d(filter_coef * 2, filter_coef * 4, kernel_size=3, padding=1),
+            nn.BatchNorm2d(filter_coef * 4),
             nn.ReLU(inplace=True),
             nn.MaxPool2d(2),  # 16 -> 8
         )
