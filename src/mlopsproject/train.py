@@ -84,13 +84,16 @@ def main(cfg: DictConfig):
         torch.save(model.state_dict(), local_model_path)
         print(f"Model saved locally at {local_model_path}")
 
-    # Upload to GCS if bucket configured
     if cfg.gcs.bucket and cfg.gcs.model_folder:
-        client = storage.Client()
-        bucket = client.bucket(cfg.gcs.bucket)
-        blob = bucket.blob(f"{cfg.gcs.model_folder}/model_{model_version}.pt")
-        blob.upload_from_filename(local_model_path)
-        print(f"Model uploaded to GCS at gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model_{model_version}.pt")
+        try:
+            client = storage.Client()
+            bucket = client.bucket(cfg.gcs.bucket)
+            blob = bucket.blob(f"{cfg.gcs.model_folder}/model_{model_version}.pt")
+            blob.upload_from_filename(local_model_path)
+            print(f"Model uploaded to GCS at gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model_{model_version}.pt")
+        except Exception as e:
+            print("Skipping GCS upload. Could not connect to Google Cloud Storage.")
+            print("Reason:", e)
 
     # -------------------------
     # Log model version to WandB

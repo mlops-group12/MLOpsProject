@@ -8,9 +8,8 @@ COPY uv.lock uv.lock
 COPY pyproject.toml pyproject.toml
 COPY README.md README.md
 COPY src/ src/
-COPY data/ data/
 COPY configs /configs
 
 RUN uv sync --locked --no-cache --no-install-project
 
-ENTRYPOINT ["uv", "run", "python", "-m", "src.mlopsproject.train", "wandb.enabled=false"]
+ENTRYPOINT ["uv", "run", "python", "-m", "src.mlopsproject.train"]
