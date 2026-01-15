@@ -63,6 +63,7 @@ def main(cfg: DictConfig):
             group=cfg.wandb.group,
             mode=cfg.wandb.mode,
         )
+        
     else:
         logger = None
 
