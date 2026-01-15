@@ -1,3 +1,8 @@
+# cloudbuild.yaml
+# Build and push train + evaluate Docker images to Artifact Registry
+# Using explicit Dockerfile paths to avoid lstat errors
+# Registry: europe-west1
+
 steps:
   # -------------------------
   # 1️⃣ Build & push train image
@@ -6,8 +11,8 @@ steps:
     args:
       [
         'build',
-        '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest',
         '-f', 'dockerfiles/train.dockerfile',
+        '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest',
         '.'
       ]
 
@@ -25,8 +30,8 @@ steps:
     args:
       [
         'build',
-        '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest',
         '-f', 'dockerfiles/evaluate.dockerfile',
+        '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest',
         '.'
       ]
 
@@ -37,6 +42,7 @@ steps:
         'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
       ]
 
+# Optional: list images for Cloud Build
 images:
   - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
   - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
