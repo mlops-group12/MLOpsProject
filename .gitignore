@@ -225,3 +225,6 @@ outputs/
 
 # wandb
 wandb/
+
+# Models
+models/
