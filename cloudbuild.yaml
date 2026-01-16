@@ -1,6 +1,6 @@
 steps:
 # -------------------------
-# Build train image 
+# Build train image  
 # -------------------------
 - name: 'gcr.io/cloud-builders/docker'
   args:
