@@ -2,11 +2,15 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from PIL import Image
 import torch
-from mlopsproject.model import CNN
+from model import CNN
 import sys
 import numpy as np
 
 app = FastAPI()
+
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the Face Emotions prediction model inference API!"}
 
 @app.post("/predict/")
 async def predict(data: UploadFile = File(...)):
