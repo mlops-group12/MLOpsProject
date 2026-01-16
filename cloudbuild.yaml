@@ -17,19 +17,7 @@ steps:
         '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/cloud-run-source-deploy/mlopsproject/mlopsproject:e86ff6c14f25cccae4b4d48e3a592992af9c4c6a', '-f', 'dockerfiles/train.dockerfile', '.']
       
 
-  # -------------------------
-  # 2️⃣ Build & push evaluate image
-  # -------------------------
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/cloud-run-source-deploy/mlopsproject/mlopsproject:e86ff6c14f25cccae4b4d48e3a592992af9c4c6a', '-f', 'dockerfiles/evaluate.dockerfile', '.']
-
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'push',
-        'europe-west1-docker.pkg.dev/active-premise-484209-h0/cloud-run-source-deploy/mlopsproject/mlopsproject:e86ff6c14f25cccae4b4d48e3a592992af9c4c6a', '-f', 'dockerfiles/evaluate.dockerfile', '.']
-      
+ 
 
 # Optional: list images for Cloud Build
 #images:
