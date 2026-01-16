@@ -36,3 +36,7 @@ steps:
       'push',
       'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:manual'
     ]
+
+options:
+  logging: CLOUD_LOGGING_ONLY   # optional, can still log to Cloud Logging
+
