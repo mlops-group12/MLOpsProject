@@ -8,7 +8,7 @@ steps:
   # 1️⃣ Build & push train image
   # -------------------------
   - name: 'gcr.io/cloud-builders/docker'
-    dir: 'dockerfiles'
+    dir: 'MLOpsProject/dockerfiles'
     args:
       [
         'build',
@@ -28,7 +28,7 @@ steps:
   # 2️⃣ Build & push evaluate image
   # -------------------------
   - name: 'gcr.io/cloud-builders/docker'
-    dir: 'dockerfiles'
+    dir: 'MLOpsProject/dockerfiles'
     args:
       [
         'build',
