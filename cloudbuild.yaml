@@ -37,6 +37,25 @@ steps:
       'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:manual'
     ]
 
+# -------------------------
+# Build api image
+# -------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'build',
+      '-f', 'dockerfiles/api.dockerfile',
+      '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/api:manual',
+      '.'
+    ]
+
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'push',
+      'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/api:manual'
+    ]
+
 options:
   logging: CLOUD_LOGGING_ONLY   # optional, can still log to Cloud Logging
 
