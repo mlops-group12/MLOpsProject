@@ -217,7 +217,7 @@ data/Suprise
 
 
 #uv lock
-uv.lock
+#uv.lock
 
 # outputs
 outputs/

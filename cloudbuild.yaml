@@ -1,37 +1,38 @@
-# cloudbuild.yaml
-# Build and push train + evaluate Docker images to Artifact Registry
-# Using explicit dir: to handle Dockerfiles in subfolders
-# Registry: europe-west1
-
 steps:
-  # -------------------------
-  # 1️⃣ Build & push train image 
-  # -------------------------
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/mlopsproject/train:e86ff6c14f25cccae4b4d48e3a592992af9c4c6a', '-f', 'dockerfiles/train.dockerfile', '.']
+# -------------------------
+# Build train image
+# -------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'build',
+      '-f', 'dockerfiles/train.dockerfile',
+      '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:manual',
+      '.'
+    ]
 
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'push',
-        'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/mlopsproject/train:e86ff6c14f25cccae4b4d48e3a592992af9c4c6a']
-      
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'push',
+      'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:manual'
+    ]
 
-  # -------------------------
-  # 2️⃣ Build & push evaluate image
-  # -------------------------
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/mlopsproject/evaluate:e86ff6c14f25cccae4b4d48e3a592992af9c4c6a', '-f', 'dockerfiles/evaluate.dockerfile', '.']
+# -------------------------
+# Build evaluate image
+# -------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'build',
+      '-f', 'dockerfiles/evaluate.dockerfile',
+      '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:manual',
+      '.'
+    ]
 
-
-  - name: 'gcr.io/cloud-builders/docker'
-    args:
-      [
-        'push',
-        'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/mlopsproject/evaluate:e86ff6c14f25cccae4b4d48e3a592992af9c4c6a']
-      
-
-# Optional: list images for Cloud Build
-#images:
-#  - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest'
-#  - 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:latest'
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'push',
+      'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/evaluate:manual'
+    ]
