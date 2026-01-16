@@ -2,7 +2,7 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.responses import FileResponse
 from PIL import Image
 import torch
-from model import CNN
+from mlopsproject.model import CNN
 import sys
 import numpy as np
 
@@ -25,7 +25,7 @@ async def predict(data: UploadFile = File(...)):
 
     # setup WandB logger only if enabled
     try:
-        model.load_state_dict(torch.load("../../models/model_weights_latest.pt"))
+        model.load_state_dict(torch.load("models/model_weights_latest.pt"))
     except FileNotFoundError:
         print("Model weights not found!")
         sys.exit(0)
