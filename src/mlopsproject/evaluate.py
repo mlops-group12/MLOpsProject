@@ -81,7 +81,7 @@ def main(cfg: DictConfig):
 
     gcs_model_path = None
     if cfg.gcs.bucket and cfg.gcs.model_folder:
-        client = storage.Client()
+        client = storage.Client(project="active-premise-484209-h0")
         bucket = client.bucket(cfg.gcs.bucket)
         blobs = list(bucket.list_blobs(prefix=cfg.gcs.model_folder))
         model_blobs = [b for b in blobs if b.name.endswith(".pt")]

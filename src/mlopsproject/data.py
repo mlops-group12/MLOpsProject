@@ -14,7 +14,7 @@ def download_gcs_folder(bucket_name, gcs_folder, local_folder):
     """
     Download all files from a GCS folder to a local folder.
     """
-    client = storage.Client()
+    client = storage.Client(project="active-premise-484209-h0")
     bucket = client.bucket(bucket_name)
     blobs = bucket.list_blobs(prefix=gcs_folder)
     for blob in blobs:
