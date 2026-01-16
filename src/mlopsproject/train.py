@@ -12,6 +12,10 @@ import pytorch_lightning as pl
 import hydra
 import torch
 from omegaconf import DictConfig
+import os
+from google.cloud import storage
+import wandb
+import datetime
 
 
 @hydra.main(
@@ -40,7 +44,10 @@ def main(cfg: DictConfig):
     """
     max_epochs = cfg.epochs
     lr = cfg.lr
-    train_data, validation_data, _ = get_dataloaders()
+    train_data, validation_data, _ = get_dataloaders(
+        gcs_bucket=cfg.gcs.bucket,
+        gcs_folder=cfg.gcs.data_folder, num_workers=2
+    )
 
     model = CNN(learning_rate=lr)
     print("device:", model.device)
@@ -59,12 +66,41 @@ def main(cfg: DictConfig):
     trainer = Trainer(max_epochs=max_epochs, logger=logger)
     trainer.fit(model, train_dataloaders=train_data, val_dataloaders=validation_data)
 
-    # from datetime import datetime
+    # -------------------------
+    # Model versioning (auto)
+    # -------------------------
+    model_version = os.getenv("MODEL_TIMESTAMP")
+    if model_version is None:
+        # Fallback in case not provided
+        model_version = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
 
-    # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    print(f"Using MODEL_VERSION = {model_version}")
 
+    # Local model path with version
+    local_model_path = f"models/model_{model_version}.pt"
+    os.makedirs(os.path.dirname(local_model_path), exist_ok=True)
+
+    # Save model locally
     if cfg.save_model:
-        torch.save(model.state_dict(), "models/model_weights_latest.pt")
+        torch.save(model.state_dict(), local_model_path)
+        print(f"Model saved locally at {local_model_path}")
+
+    if cfg.gcs.bucket and cfg.gcs.model_folder:
+        try:
+            client = storage.Client(project="active-premise-484209-h0")
+            bucket = client.bucket(cfg.gcs.bucket)
+            blob = bucket.blob(f"{cfg.gcs.model_folder}/model_{model_version}.pt")
+            blob.upload_from_filename(local_model_path)
+            print(f"Model uploaded to GCS at gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model_{model_version}.pt")
+        except Exception as e:
+            print("Skipping GCS upload. Could not connect to Google Cloud Storage.")
+            print("Reason:", e)
+
+    # -------------------------
+    # Log model version to WandB
+    # -------------------------
+    if cfg.wandb.enabled:
+        wandb.run.name = f"faces_{model_version}"
 
 
 if __name__ == "__main__":

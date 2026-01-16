@@ -10,10 +10,15 @@ COPY uv.lock uv.lock
 COPY pyproject.toml pyproject.toml
 COPY README.md README.md
 COPY src/ src/
-COPY data/ data/
 COPY configs /configs
 
 
 RUN uv sync --locked --no-cache --no-install-project
+
+# Accept timestamp as build argument
+ARG MODEL_TIMESTAMP
+# Set it as environment variable inside container
+ENV MODEL_TIMESTAMP=${MODEL_TIMESTAMP}
+
 
 ENTRYPOINT ["uv", "run", "python", "-m", "src.mlopsproject.evaluate"]

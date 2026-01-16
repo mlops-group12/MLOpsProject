@@ -217,7 +217,7 @@ data/Suprise
 
 
 #uv lock
-uv.lock
+#uv.lock
 
 # outputs
 outputs/
@@ -225,6 +225,9 @@ outputs/
 
 # wandb
 wandb/
+/data
 
 # Models
 models/
+
+lightning_logs/
