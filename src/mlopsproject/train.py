@@ -87,7 +87,7 @@ def main(cfg: DictConfig):
 
     if cfg.gcs.bucket and cfg.gcs.model_folder:
         try:
-            client = storage.Client()
+            client = storage.Client(project="active-premise-484209-h0")
             bucket = client.bucket(cfg.gcs.bucket)
             blob = bucket.blob(f"{cfg.gcs.model_folder}/model_{model_version}.pt")
             blob.upload_from_filename(local_model_path)
