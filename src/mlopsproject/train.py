@@ -46,7 +46,7 @@ def main(cfg: DictConfig):
     lr = cfg.lr
     train_data, validation_data, _ = get_dataloaders(
         gcs_bucket=cfg.gcs.bucket,
-        gcs_folder=cfg.gcs.data_folder
+        gcs_folder=cfg.gcs.data_folder, num_workers=2
     )
 
     model = CNN(learning_rate=lr)
