@@ -38,11 +38,15 @@ def get_dataloaders(seed=0, num_workers=9, train_batch_size=64):
             transforms.ToTensor(),  # Convert torch tensor
         ],
     )
-    path = os.getcwd()
 
-    path = os.path.join(path, "data")
+    gcs_path = "/gcs/data-face-emotions/data"
+    local_path = os.path.join(os.getcwd(), "data")
 
+    path = gcs_path if os.path.isdir(gcs_path) else local_path
+
+    print("Using dataset path:", path)
     dataset = datasets.ImageFolder(root=path, transform=data_transform)
+
 
     # split into indices
     train_length = int(0.8 * len(dataset))
