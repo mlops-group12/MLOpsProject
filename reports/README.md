@@ -168,7 +168,11 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 4 fill here ---
+We used uv to manage both our Python environment and project dependencies. This tool provides a consistent and efficient workflow across all team members and ensures that the project can be easily reproduced by others. Dependency versions are recorded in a uv.lock file, which is committed to the GitHub repository. This lock file guarantees that everyone installs the exact same versions of all packages, ensuring reproducibility across systems.
+To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager). 
+
+Alternatively, if using pip, they can install dependencies with pip install -r requirements.txt. The requirements.txt file is created from the uv.lock file using uv export --format requirements.txt, which can also be installed using uv via uv pip install -r requirements.txt.
+New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade. 
 
 ### Question 5
 
@@ -184,7 +188,9 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 5 fill here ---
+We initialized the project using the provided cookiecutter template and followed its overall structure. We populated the main folders, including src, configs, dockerfiles, and tests, while keeping the template’s organization intact. Within the src directory, we added a frontend.py script to handle the api's frontend-related functionality. We also added an evaluate.dockerfile to the dockerfiles directory for evaluation purposes, a base_config file in configs to store shared configuration settings, and integration tests in the tests directory.
+These additions were made to better separate responsibilities within the project, improve readability, and support smoother collaboration among group members by reducing merge conflicts.
+We deviated slightly from the template by removing the data folder. Instead of storing data locally, our src/data.py module loads data directly from Google Cloud Storage as the dataset is too large to be committed to the repository. For reproducibility, we also included functionality in the data loader to download the dataset directly from Kaggle for users who wish to run the project independently.
 
 ### Question 6
 
@@ -199,7 +205,10 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 6 fill here ---
+What we implemented: 
+
+Following good coding practices is important in larger projects because it improves understandability when reviewing code written by others or when returning to older parts of the project. Since developers often have very individual coding styles, clear structure and documentation help bridge the gap between different approaches and make it easier to understand what specific functions, scripts, or modules are intended to do.
+Additionally, using a standardized project structure, such as a cookiecutter template, helps reduce code duplication and prevents directory-related errors. It furthermore helps maintain an overview of the code structure. Overall, these practices reduce the time and effort required to understand, maintain, and extend code written by others or earlier in the project.
 
 ## Version control
 
@@ -263,7 +272,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 10 fill here ---
+DVC was included in this project as a learning tool rather than for its functionality in our specific implementation. However, DVC would be highly valuable in industrial or research settings where data are continuously updated. When data points are added or removed and model predictions change, DVC allows for reproduction of earlier experiments to identify the cause of the changed predictions and verify that they originate from data modifications rather than code changes. DVC is also beneficial when existing data are updated or processed through multiple stages. In such cases, changes in preprocessing can lead to errors or differences in model performance. By versioning each data state, DVC makes it possible to trace back through previous data versions and identify the root cause of such issues.
 
 ### Question 11
 
