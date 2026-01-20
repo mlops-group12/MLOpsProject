@@ -2,7 +2,7 @@ import os
 import pandas as pd
 import requests
 import streamlit as st
-#from google.cloud import run_v2
+from google.cloud import run_v2
 
 
 def get_backend_url():
