@@ -1,54 +1,54 @@
 """
-Data Loading Module (DVC-first, cross-platform support)
+Data Loading Module (DVC + local support)
 """
 
 import os
 import numpy as np
 from torch.utils.data import Subset, DataLoader
 from torchvision import transforms, datasets
-import tempfile
 import subprocess
-import shutil
 
 
-def pull_dvc_temp(dvc_file: str) -> str:
+def pull_dvc_data(dvc_file: str) -> str:
     """
-    Pull a DVC-tracked dataset into a temporary folder and return the path.
+    Pull a DVC-tracked dataset to its recorded path.
+    Returns the folder path containing the dataset.
     """
+    try:
+        print(f"Pulling dataset via DVC ({dvc_file})...")
+        subprocess.run(["dvc", "pull", dvc_file], check=True)
+    except subprocess.CalledProcessError:
+        print(f"DVC pull failed for {dvc_file}.")
+        # We'll still check if the folder exists locally afterwards
 
-    # The path that DVC tracks (read from .dvc file)
+    # Read the folder path tracked by this DVC file
+    folder_path = None
     with open(dvc_file, "r") as f:
         for line in f:
-            if line.startswith("outs:"):
-                # The path is usually on the next line
-                tracked_path = next(f).strip().split(":")[-1].strip()
+            if line.strip().startswith("path:") or line.strip().startswith("outs:"):
+                # Usually the tracked folder is on the next line
+                folder_path = next(f).split(":")[-1].strip()
                 break
-        else:
-            raise ValueError(f"Could not find tracked path in {dvc_file}")
 
-    # Pull dataset to its normal location
-    subprocess.run(["dvc", "pull", dvc_file], check=True)
+    if not folder_path:
+        raise ValueError(f"Could not determine tracked path from {dvc_file}")
 
-    # Copy to temp folder if you want to avoid keeping data in repo
-    tmp_dir = tempfile.mkdtemp()
-    shutil.copytree(tracked_path, os.path.join(tmp_dir, os.path.basename(tracked_path)))
+    if not os.path.isdir(folder_path):
+        raise RuntimeError(
+            f"No valid dataset folder found at {folder_path} "
+            "(DVC pull may have failed or local folder missing)."
+        )
 
-    return os.path.join(tmp_dir, os.path.basename(tracked_path))
+    print(f"✅ Dataset ready at {folder_path}")
+    return folder_path
 
 
-def get_dataloaders(
-    seed: int = 0,
-    num_workers: int = 4,
-    train_batch_size: int = 64,
-) -> tuple:
+def get_dataloaders(seed=0, num_workers=4, train_batch_size=64):
     """
     Create train, validation, and test DataLoaders.
 
-    Workflow:
-    1. Attempt to pull dataset via DVC (ensures versioning and reproducibility).
-    2. If DVC fails, fallback to local 'data/' folder in repo root.
+    Uses DVC dataset if available; falls back to local folder if necessary.
     """
-
     np.random.seed(seed)
 
     data_transform = transforms.Compose([
@@ -57,48 +57,32 @@ def get_dataloaders(
         transforms.ToTensor(),
     ])
 
-    # -------------------------
-    # Determine dataset path
-    # -------------------------
+    # Repo root
     REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
-    local_data_path = os.path.join(REPO_ROOT, "data")
+    dvc_file = os.path.join(REPO_ROOT, "data.dvc")
 
-    try:
-        # Priority: use DVC to pull the dataset
-        dataset_path = pull_dvc_temp(os.path.join(REPO_ROOT, "data.dvc"))
-    except Exception as e:
-        print(f"DVC pull failed: {e}")
-        if os.path.isdir(local_data_path):
-            print(f"Falling back to local data folder: {local_data_path}")
-            dataset_path = local_data_path
-        else:
-            raise RuntimeError("No valid dataset path found (DVC failed and local folder missing).")
+    # Pull DVC data first
+    dataset_path = pull_dvc_data(dvc_file)
 
-    # -------------------------
     # Load dataset
-    # -------------------------
     dataset = datasets.ImageFolder(root=dataset_path, transform=data_transform)
 
-    # Split into train/validation/test
-    n_total = len(dataset)
-    n_train = int(0.8 * n_total)
-    n_val = int(0.1 * n_total)  # 10% validation
-    n_test = n_total - n_train - n_val
+    # Split into train/val/test
+    train_length = int(0.8 * len(dataset))
+    val_length = int(0.9 * len(dataset))
+    indices = np.random.choice(len(dataset), len(dataset), replace=False)
 
-    indices = np.random.permutation(n_total)
-    train_dataset = Subset(dataset, indices[:n_train])
-    val_dataset = Subset(dataset, indices[n_train:n_train + n_val])
-    test_dataset = Subset(dataset, indices[n_train + n_val:])
+    train_dataset = Subset(dataset, indices[:train_length])
+    validation_dataset = Subset(dataset, indices[train_length:val_length])
+    test_dataset = Subset(dataset, indices[val_length:])
 
-    # -------------------------
-    # Create DataLoaders
-    # -------------------------
-    train_loader = DataLoader(train_dataset, batch_size=train_batch_size, num_workers=num_workers, persistent_workers=True)
-    val_loader = DataLoader(val_dataset, batch_size=train_batch_size, num_workers=num_workers, persistent_workers=True)
-    test_loader = DataLoader(test_dataset, batch_size=train_batch_size, num_workers=num_workers, persistent_workers=True)
+    # DataLoaders
+    train_loader = DataLoader(train_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True)
+    val_loader = DataLoader(validation_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True)
+    test_loader = DataLoader(test_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True)
 
     print(f"Number of training samples: {len(train_dataset)}")
-    print(f"Number of validation samples: {len(val_dataset)}")
+    print(f"Number of validation samples: {len(validation_dataset)}")
     print(f"Number of test samples: {len(test_dataset)}")
 
     return train_loader, val_loader, test_loader
