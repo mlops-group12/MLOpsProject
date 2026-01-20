@@ -8,20 +8,32 @@ from torch.utils.data import Subset, DataLoader
 from torchvision import transforms, datasets
 import tempfile
 import subprocess
+import shutil
 
 
 def pull_dvc_temp(dvc_file: str) -> str:
     """
     Pull a DVC-tracked dataset into a temporary folder and return the path.
     """
+
+    # The path that DVC tracks (read from .dvc file)
+    with open(dvc_file, "r") as f:
+        for line in f:
+            if line.startswith("outs:"):
+                # The path is usually on the next line
+                tracked_path = next(f).strip().split(":")[-1].strip()
+                break
+        else:
+            raise ValueError(f"Could not find tracked path in {dvc_file}")
+
+    # Pull dataset to its normal location
+    subprocess.run(["dvc", "pull", dvc_file], check=True)
+
+    # Copy to temp folder if you want to avoid keeping data in repo
     tmp_dir = tempfile.mkdtemp()
+    shutil.copytree(tracked_path, os.path.join(tmp_dir, os.path.basename(tracked_path)))
 
-    print(f"Pulling dataset via DVC ({dvc_file}) into temporary folder {tmp_dir}...")
-    subprocess.run([
-        "dvc", "pull", dvc_file, "--out", tmp_dir
-    ], check=True)
-
-    return tmp_dir
+    return os.path.join(tmp_dir, os.path.basename(tracked_path))
 
 
 def get_dataloaders(
