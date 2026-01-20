@@ -1,5 +1,5 @@
 """
-Data Loading Module (cross-platform GCS support)
+Data Loading Module (DVC-first, cross-platform support)
 """
 
 import os
@@ -7,37 +7,34 @@ import numpy as np
 from torch.utils.data import Subset, DataLoader
 from torchvision import transforms, datasets
 import tempfile
-from google.cloud import storage
+import subprocess
 
 
-def download_gcs_folder(bucket_name, gcs_folder, local_folder):
+def pull_dvc_temp(dvc_file: str) -> str:
     """
-    Download all files from a GCS folder to a local folder.
+    Pull a DVC-tracked dataset into a temporary folder and return the path.
     """
-    client = storage.Client(project="active-premise-484209-h0")
-    bucket = client.bucket(bucket_name)
-    blobs = bucket.list_blobs(prefix=gcs_folder)
-    for blob in blobs:
-        if blob.name.endswith("/"):
-            continue
-        rel_path = os.path.relpath(blob.name, gcs_folder)
-        local_file_path = os.path.join(local_folder, rel_path)
-        os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
-        blob.download_to_filename(local_file_path)
+    tmp_dir = tempfile.mkdtemp()
+
+    print(f"Pulling dataset via DVC ({dvc_file}) into temporary folder {tmp_dir}...")
+    subprocess.run([
+        "dvc", "pull", dvc_file, "--out", tmp_dir
+    ], check=True)
+
+    return tmp_dir
 
 
 def get_dataloaders(
-    seed=0,
-    num_workers=4,
-    train_batch_size=64,
-    gcs_bucket=None,
-    gcs_folder=None
-):
+    seed: int = 0,
+    num_workers: int = 4,
+    train_batch_size: int = 64,
+) -> tuple:
     """
     Create train, validation, and test DataLoaders.
 
-    This function prioritizes the local repo-root 'data/' folder.
-    If the folder does not exist, it falls back to downloading from GCS.
+    Workflow:
+    1. Attempt to pull dataset via DVC (ensures versioning and reproducibility).
+    2. If DVC fails, fallback to local 'data/' folder in repo root.
     """
 
     np.random.seed(seed)
@@ -51,40 +48,45 @@ def get_dataloaders(
     # -------------------------
     # Determine dataset path
     # -------------------------
-    # Repo root = two levels up from this file
     REPO_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "../.."))
     local_data_path = os.path.join(REPO_ROOT, "data")
 
-    if os.path.isdir(local_data_path):
-        dataset_path = local_data_path
-        print(f"Using local data folder: {dataset_path}")
-    elif gcs_bucket and gcs_folder:
-        tmp_dir = tempfile.mkdtemp()
-        print(f"Local data not found, downloading from GCS bucket {gcs_bucket}/{gcs_folder} to {tmp_dir} ...")
-        download_gcs_folder(gcs_bucket, gcs_folder, tmp_dir)
-        dataset_path = tmp_dir
-    else:
-        raise ValueError("No valid dataset path found (local or GCS)")
+    try:
+        # Priority: use DVC to pull the dataset
+        dataset_path = pull_dvc_temp(os.path.join(REPO_ROOT, "data.dvc"))
+    except Exception as e:
+        print(f"DVC pull failed: {e}")
+        if os.path.isdir(local_data_path):
+            print(f"Falling back to local data folder: {local_data_path}")
+            dataset_path = local_data_path
+        else:
+            raise RuntimeError("No valid dataset path found (DVC failed and local folder missing).")
 
+    # -------------------------
     # Load dataset
+    # -------------------------
     dataset = datasets.ImageFolder(root=dataset_path, transform=data_transform)
 
-    # Split into train/val/test
-    train_length = int(0.8 * len(dataset))
-    val_length = int(0.9 * len(dataset))
-    indices = np.random.choice(len(dataset), len(dataset), replace=False)
+    # Split into train/validation/test
+    n_total = len(dataset)
+    n_train = int(0.8 * n_total)
+    n_val = int(0.1 * n_total)  # 10% validation
+    n_test = n_total - n_train - n_val
 
-    train_dataset = Subset(dataset, indices[:train_length])
-    validation_dataset = Subset(dataset, indices[train_length:val_length])
-    test_dataset = Subset(dataset, indices[val_length:])
+    indices = np.random.permutation(n_total)
+    train_dataset = Subset(dataset, indices[:n_train])
+    val_dataset = Subset(dataset, indices[n_train:n_train + n_val])
+    test_dataset = Subset(dataset, indices[n_train + n_val:])
 
-    # DataLoaders
-    train_loader = DataLoader(train_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True)
-    val_loader = DataLoader(validation_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True)
-    test_loader = DataLoader(test_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True)
+    # -------------------------
+    # Create DataLoaders
+    # -------------------------
+    train_loader = DataLoader(train_dataset, batch_size=train_batch_size, num_workers=num_workers, persistent_workers=True)
+    val_loader = DataLoader(val_dataset, batch_size=train_batch_size, num_workers=num_workers, persistent_workers=True)
+    test_loader = DataLoader(test_dataset, batch_size=train_batch_size, num_workers=num_workers, persistent_workers=True)
 
     print(f"Number of training samples: {len(train_dataset)}")
-    print(f"Number of validation samples: {len(validation_dataset)}")
+    print(f"Number of validation samples: {len(val_dataset)}")
     print(f"Number of test samples: {len(test_dataset)}")
 
     return train_loader, val_loader, test_loader
