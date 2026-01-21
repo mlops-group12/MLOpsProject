@@ -13,6 +13,7 @@ import hydra
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
+import shutil
 
 from evidently.legacy.metrics import DataDriftTable
 from evidently.legacy.report import Report
@@ -73,21 +74,30 @@ def upload_to_gcs(local_path: str, bucket_name: str, gcs_path: str):
     blob.upload_from_filename(local_path)
 
 
-def sync_gcs_images_to_local_classdir(bucket: str, prefix: str, local_root: str, class_name: str = "drift"):
-    """
-    Uses gsutil to copy images from gs://bucket/prefix/* into:
-      local_root/class_name/*
+import os
+import shutil
+import subprocess
 
-    This makes the folder ImageFolder-compatible.
-    """
+
+def sync_gcs_images_to_local_classdir(bucket: str, prefix: str, local_root: str, class_name: str = "drift"):
+
     local_class_dir = os.path.join(local_root, class_name)
     os.makedirs(local_class_dir, exist_ok=True)
 
-    gcs_uri = f"gs://{bucket}/{prefix.strip('/')}"
+    
+    gcloud_exe = shutil.which("gcloud.cmd") or shutil.which("gcloud")
+    if not gcloud_exe:
+        raise RuntimeError(
+            "gcloud not found on PATH. "
+            "Restart your terminal after installing Google Cloud SDK or add its bin directory to PATH."
+        )
+    
+    gcs_uri = f"gs://{bucket}/{prefix.strip('/')}/"
 
-    subprocess.check_call(["gsutil", "-m", "cp", f"{gcs_uri}/*", local_class_dir])
+    subprocess.check_call([gcloud_exe, "storage", "cp", "--recursive", gcs_uri, local_root])
 
 
+    
 @hydra.main(
     config_path="../../configs",
     config_name="drift_config",
