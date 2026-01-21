@@ -6,6 +6,7 @@ between the training dataset and a simulated drifted dataset.
 """
 
 import os
+import subprocess 
 import numpy as np
 import pandas as pd
 import hydra
@@ -34,7 +35,6 @@ def extract_features(dataloader, max_batches: int):
         if batch_idx >= max_batches:
             break
 
-        # robust to GPU tensors
         images = images.detach().cpu().numpy()
 
         for img in images:
@@ -73,6 +73,21 @@ def upload_to_gcs(local_path: str, bucket_name: str, gcs_path: str):
     blob.upload_from_filename(local_path)
 
 
+def sync_gcs_images_to_local_classdir(bucket: str, prefix: str, local_root: str, class_name: str = "drift"):
+    """
+    Uses gsutil to copy images from gs://bucket/prefix/* into:
+      local_root/class_name/*
+
+    This makes the folder ImageFolder-compatible.
+    """
+    local_class_dir = os.path.join(local_root, class_name)
+    os.makedirs(local_class_dir, exist_ok=True)
+
+    gcs_uri = f"gs://{bucket}/{prefix.strip('/')}"
+
+    subprocess.check_call(["gsutil", "-m", "cp", f"{gcs_uri}/*", local_class_dir])
+
+
 @hydra.main(
     config_path="../../configs",
     config_name="drift_config",
@@ -81,15 +96,11 @@ def upload_to_gcs(local_path: str, bucket_name: str, gcs_path: str):
 def main(cfg: DictConfig):
     """
     Run an offline data drift analysis comparing:
-    - Training data 
-    - CelebA 
+    - Training data (reference)
+    - Drift images (local or pulled from GCS) (current)
     """
 
-    train_loader, _, _ = get_dataloaders(
-        gcs_bucket=cfg.gcs.bucket,
-        gcs_folder=cfg.gcs.data_folder,
-        num_workers=2,
-    )
+    train_loader, _, _ = get_dataloaders(num_workers=2)
 
     reference_df = extract_features(train_loader, max_batches=cfg.drift.max_batches)
     print(f"Reference samples: {len(reference_df)}")
@@ -102,11 +113,30 @@ def main(cfg: DictConfig):
         ]
     )
 
+   
+    drift_root = cfg.drift.celeba_root
+
+    if getattr(cfg.drift, "download_from_gcs", False):
+        if not cfg.gcs.bucket:
+            raise ValueError("cfg.gcs.bucket is empty but drift.download_from_gcs=true")
+
+        if not getattr(cfg.drift, "gcs_image_prefix", None):
+            raise ValueError("cfg.drift.gcs_image_prefix is missing but drift.download_from_gcs=true")
+
+        drift_root = os.path.join("/tmp", "drift_images")
+        os.makedirs(drift_root, exist_ok=True)
+
+        sync_gcs_images_to_local_classdir(
+            bucket=cfg.gcs.bucket,
+            prefix=cfg.drift.gcs_image_prefix,
+            local_root=drift_root,
+            class_name="drift",
+        )
+
     celeba_dataset = datasets.ImageFolder(
-        root=cfg.drift.celeba_root,
+        root=drift_root,
         transform=celeba_transform,
     )
-
 
     celeba_loader = DataLoader(
         celeba_dataset,
@@ -121,12 +151,13 @@ def main(cfg: DictConfig):
     report = Report(metrics=[DataDriftTable()])
     report.run(reference_data=reference_df, current_data=current_df)
 
-    # Use config for output
+    # Save locally
     os.makedirs(cfg.drift.output_dir, exist_ok=True)
     output_path = os.path.join(cfg.drift.output_dir, f"{cfg.drift.report_name}.html")
     report.save_html(output_path)
     print(f"Drift report saved to {output_path}")
 
+    # Optionally upload report to GCS
     if cfg.drift.save_to_gcs:
         if not cfg.gcs.bucket:
             raise ValueError("cfg.gcs.bucket is empty but drift.save_to_gcs=true")
