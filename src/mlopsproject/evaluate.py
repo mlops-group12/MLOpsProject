@@ -2,8 +2,8 @@
 Model Evaluation Module
 
 This module evaluates a trained CNN model on test data.
-It automatically selects the latest versioned model from local storage or GCS,
-computes test metrics, and logs results to WandB if enabled.
+It automatically pulls the dataset via DVC, selects the latest versioned model
+from local storage or GCS, computes test metrics, and logs results to WandB if enabled.
 """
 
 import sys
@@ -31,19 +31,19 @@ def main(cfg: DictConfig):
     """Evaluate a trained CNN model on test data."""
 
     # -------------------------
-    # Load test data
+    # Load test data (DVC-first)
     # -------------------------
-    _, _, test_data = get_dataloaders(
-        gcs_bucket=cfg.gcs.bucket,
-        gcs_folder=cfg.gcs.data_folder
-    )
+    _, _, test_data = get_dataloaders(num_workers=2)
 
+    # -------------------------
     # Initialize model
+    # -------------------------
     model = CNN()
 
     # -------------------------
     # Setup WandB logger
     # -------------------------
+    logger = None
     if cfg.wandb.enabled:
         logger = pl.loggers.WandbLogger(
             project=cfg.wandb.project,
@@ -51,11 +51,9 @@ def main(cfg: DictConfig):
             group=cfg.wandb.group,
             mode=cfg.wandb.mode,
         )
-    else:
-        logger = None
 
     # -------------------------
-    # Determine model version
+    # Determine model version / path
     # -------------------------
     model_version = os.getenv("MODEL_TIMESTAMP")
     local_model_path = None
@@ -72,16 +70,18 @@ def main(cfg: DictConfig):
     # -------------------------
     gcs_model_path = None
     if cfg.gcs.bucket and cfg.gcs.model_folder:
-        client = storage.Client(project="active-premise-484209-h0")
-        bucket = client.bucket(cfg.gcs.bucket)
-        blobs = list(bucket.list_blobs(prefix=cfg.gcs.model_folder))
-        model_blobs = [b for b in blobs if b.name.endswith(".pt")]
-        if model_blobs:
-            latest_blob = max(model_blobs, key=lambda b: b.name)
-            tmp_dir = tempfile.mkdtemp()
-            gcs_model_path = os.path.join(tmp_dir, os.path.basename(latest_blob.name))
-            print(f"Downloading latest model from GCS: {latest_blob.name} -> {gcs_model_path}")
-            latest_blob.download_to_filename(gcs_model_path)
+        try:
+            client = storage.Client(project="active-premise-484209-h0")
+            bucket = client.bucket(cfg.gcs.bucket)
+            blobs = [b for b in bucket.list_blobs(prefix=cfg.gcs.model_folder) if b.name.endswith(".pt")]
+            if blobs:
+                latest_blob = max(blobs, key=lambda b: b.name)
+                tmp_dir = tempfile.mkdtemp()
+                gcs_model_path = os.path.join(tmp_dir, os.path.basename(latest_blob.name))
+                print(f"Downloading latest model from GCS: {latest_blob.name} -> {gcs_model_path}")
+                latest_blob.download_to_filename(gcs_model_path)
+        except Exception as e:
+            print("Skipping GCS model download. Reason:", e)
 
     # -------------------------
     # Load model weights
@@ -91,6 +91,7 @@ def main(cfg: DictConfig):
         model.load_state_dict(torch.load(local_model_path))
         model_version = os.path.basename(local_model_path).split("_")[-1].replace(".pt", "")
     elif gcs_model_path:
+        print(f"Loading model from GCS: {gcs_model_path}")
         model.load_state_dict(torch.load(gcs_model_path))
         model_version = os.path.basename(gcs_model_path).split("_")[-1].replace(".pt", "")
     else:
@@ -114,16 +115,16 @@ def main(cfg: DictConfig):
     # -------------------------
     preds = torch.cat(model.test_preds)
     targets = torch.cat(model.test_targets)
-
     class_names = ["angry", "fear", "happy", "sad", "surprise"]
 
+    # Raw confusion matrix
     conf_fig = plot_confusion_matrix(preds, targets, class_names, normalize=False)
     if cfg.wandb.enabled and logger is not None:
         import wandb
         wandb.log({"confusion_matrix": wandb.Image(conf_fig)})
     plt.close(conf_fig)
 
-    # Optional normalized confusion matrix
+    # Normalized confusion matrix
     plot_confusion_matrix(preds, targets, class_names, normalize=True)
 
 

@@ -11,4 +11,5 @@ COPY src src/
 
 RUN uv sync --locked --no-cache --no-install-project
 
-ENTRYPOINT ["uv", "run", "uvicorn", "src.mlopsproject.api:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["sh", "-c", "uv run uvicorn src.mlopsproject.api:app --host 0.0.0.0 --port ${PORT}"]
+

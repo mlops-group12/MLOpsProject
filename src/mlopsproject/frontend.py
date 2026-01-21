@@ -2,10 +2,10 @@ import os
 import pandas as pd
 import requests
 import streamlit as st
-#from google.cloud import run_v2
+from google.cloud import run_v2
 
 
-def get_backend_url1():
+def get_backend_url():
     """Get the URL of the backend service."""
     parent = "projects/dtumlops/locations/europe-west1"
     client = run_v2.ServicesClient()
@@ -14,9 +14,6 @@ def get_backend_url1():
         if service.name.split("/")[-1] == "predict":
             return service.uri
     return os.environ.get("BACKEND", None)
-
-def get_backend_url():
-    return 'http://0.0.0.0:8000'
 
 
 def classify_image(image, backend):

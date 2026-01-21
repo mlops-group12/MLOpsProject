@@ -1,0 +1,14 @@
+md5: 5900f96f7e89d03b5df3ef1178b13114
+frozen: true
+deps:
+- md5: 25cc1ad2e489a7f57bdd72d5b72104e0.dir
+  size: 733890704
+  nfiles: 59101
+  hash: md5
+  path: gs://data-face-emotions/data
+outs:
+- md5: ed94a3af56df8968f0aaee0b70a6663a.dir
+  size: 733890704
+  nfiles: 59101
+  hash: md5
+  path: data
