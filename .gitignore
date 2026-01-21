@@ -233,3 +233,4 @@ models/
 
 lightning_logs/
 /temp_data_test
+.dvc/
