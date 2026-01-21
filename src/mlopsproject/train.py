@@ -33,26 +33,24 @@ def main(cfg: DictConfig):
     3. Sets up optional WandB logging
     4. Trains the model using PyTorch Lightning
     5. Saves model weights if configured
-
-    Args:
-        cfg (DictConfig): Hydra configuration object.
-
-    Note:
-        - Model weights are saved to 'models/model_weights_latest.pt' if save_model is True
-        - Training and validation metrics are logged via PyTorch Lightning
-        - If WandB is enabled, metrics are also logged to WandB
     """
     max_epochs = cfg.epochs
     lr = cfg.lr
-    train_data, validation_data, _ = get_dataloaders(
-        gcs_bucket=cfg.gcs.bucket,
-        gcs_folder=cfg.gcs.data_folder, num_workers=2
-    )
 
+    # -------------------------
+    # Data loading via DVC
+    # -------------------------
+    train_data, validation_data, test_data = get_dataloaders(num_workers=2)
+
+    # -------------------------
+    # Model initialization
+    # -------------------------
     model = CNN(learning_rate=lr)
     print("device:", model.device)
 
-    # setup WandB logger only if enabled
+    # -------------------------
+    # WandB logger
+    # -------------------------
     if cfg.wandb.enabled:
         logger = pl.loggers.WandbLogger(
             project=cfg.wandb.project,
@@ -63,20 +61,19 @@ def main(cfg: DictConfig):
     else:
         logger = None
 
+    # -------------------------
+    # Trainer and fit
+    # -------------------------
     trainer = Trainer(max_epochs=max_epochs, logger=logger)
     trainer.fit(model, train_dataloaders=train_data, val_dataloaders=validation_data)
 
     # -------------------------
-    # Model versioning (auto)
+    # Model versioning
     # -------------------------
-    model_version = os.getenv("MODEL_TIMESTAMP")
-    if model_version is None:
-        # Fallback in case not provided
-        model_version = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-
+    model_version = os.getenv("MODEL_TIMESTAMP") or datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     print(f"Using MODEL_VERSION = {model_version}")
 
-    # Local model path with version
+    # Local save path
     local_model_path = f"models/model_{model_version}.pt"
     os.makedirs(os.path.dirname(local_model_path), exist_ok=True)
 
@@ -85,6 +82,9 @@ def main(cfg: DictConfig):
         torch.save(model.state_dict(), local_model_path)
         print(f"Model saved locally at {local_model_path}")
 
+    # -------------------------
+    # Optional upload to GCS
+    # -------------------------
     if cfg.gcs.bucket and cfg.gcs.model_folder:
         try:
             client = storage.Client(project="active-premise-484209-h0")
@@ -97,7 +97,7 @@ def main(cfg: DictConfig):
             print("Reason:", e)
 
     # -------------------------
-    # Log model version to WandB
+    # WandB run name
     # -------------------------
     if cfg.wandb.enabled:
         wandb.run.name = f"faces_{model_version}"
