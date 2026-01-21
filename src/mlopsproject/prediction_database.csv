@@ -1,0 +1,2 @@
+time,image_name,width,height,brightness,contrast,sharpness,predicted_emotion,model_version
+2026-01-21 09:44:47.663961+00:00,Skærmbillede 2026-01-16 kl. 10.00.22.png,64,64,214.8208,38.0470,8.5345,fear
