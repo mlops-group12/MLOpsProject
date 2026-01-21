@@ -18,21 +18,28 @@ class TestModel:
         model = CNN()
         x = torch.randn(1, 1, *self.input_size)
         y = torch.randn(1, 5)
-        y = model.training_step((x, y), batch_idx=0)
-        assert y is not None
+        loss = model.training_step((x, y), batch_idx=0)
+        assert loss is not None
+        assert torch.is_tensor(loss)
 
     def test_validation_step(self):
         model = CNN()
+
         x = torch.randn(1, 1, *self.input_size)
         y = torch.randn(1, 5)
-        y = model.validation_step((x, y))
-        assert y is None
+
+        out = model.validation_step((x, y), batch_idx=0)
+        assert out is None
 
     def test_test_step(self):
         model = CNN()
         x = torch.randn(1, 1, *self.input_size)
         y = torch.randn(1, 5)
-        y = model.test_step((x, y))
+
+        model.on_test_start()
+        
+        y = model.test_step((x, y), batch_idx=0)
+
         assert y is None
 
     def test_configure_optimizers(self):

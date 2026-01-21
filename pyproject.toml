@@ -77,6 +77,11 @@ line-length = 120
 omit = ["tests/*"]
 
 
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:.*self.log.*trainer.*:UserWarning",
+]
+
 [project.scripts]
 preprocess = "mlopsproject.data:main"
 train = "mlopsproject.train:main"
