@@ -5,7 +5,7 @@ import streamlit as st
 from google.cloud import run_v2
 
 
-def get_backend_url():
+def get_backend_url1():
     """Get the URL of the backend service."""
     parent = "projects/dtumlops/locations/europe-west1"
     client = run_v2.ServicesClient()
@@ -14,6 +14,9 @@ def get_backend_url():
         if service.name.split("/")[-1] == "predict":
             return service.uri
     return os.environ.get("BACKEND", None)
+
+def get_backend_url():
+    return 'https://api-6-675101993887.europe-west1.run.app'
 
 
 def classify_image(image, backend):
