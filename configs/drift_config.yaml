@@ -1,0 +1,23 @@
+defaults:
+  - base_config
+  - _self_
+
+
+wandb:
+  enabled: false
+
+hydra:
+  job:
+    name: drift_faces
+
+
+batch_size: 64
+
+drift:
+  save_to_gcs: true
+  gcs_report_folder: "reportsreports/drift"
+  max_batches: 50
+  report_name: "celeba_drift"
+  output_dir: "reports/drift"
+  celeba_root: "data/celeba"
+  celeba_split: "train"
