@@ -121,6 +121,7 @@ def main(cfg: DictConfig):
     conf_fig = plot_confusion_matrix(preds, targets, class_names, normalize=False)
     if cfg.wandb.enabled and logger is not None:
         import wandb
+
         wandb.log({"confusion_matrix": wandb.Image(conf_fig)})
     plt.close(conf_fig)
 

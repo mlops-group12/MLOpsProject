@@ -148,7 +148,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
-We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning. 
+We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning.
 
 ## Coding environment
 
@@ -169,10 +169,10 @@ We haven't used third-party frameworks! Our project is build around pytorch and 
 > Answer:
 
 We used uv to manage both our Python environment and project dependencies. This tool provides a consistent and efficient workflow across all team members and ensures that the project can be easily reproduced by others. Dependency versions are recorded in a uv.lock file, which is committed to the GitHub repository. This lock file guarantees that everyone installs the exact same versions of all packages, ensuring reproducibility across systems.
-To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager). 
+To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager).
 
 Alternatively, if using pip, they can install dependencies with pip install -r requirements.txt. The requirements.txt file is created from the uv.lock file using uv export --format requirements.txt, which can also be installed using uv via uv pip install -r requirements.txt.
-New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade. 
+New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade.
 
 ### Question 5
 
@@ -205,7 +205,7 @@ We deviated slightly from the template by removing the data folder. Instead of s
 >
 > Answer:
 
-What we implemented: 
+What we implemented:
 
 Following good coding practices is important in larger projects because it improves understandability when reviewing code written by others or when returning to older parts of the project. Since developers often have very individual coding styles, clear structure and documentation help bridge the gap between different approaches and make it easier to understand what specific functions, scripts, or modules are intended to do.
 Additionally, using a standardized project structure, such as a cookiecutter template, helps reduce code duplication and prevents directory-related errors. It furthermore helps maintain an overview of the code structure. Overall, these practices reduce the time and effort required to understand, maintain, and extend code written by others or earlier in the project.
@@ -246,6 +246,8 @@ test_model.py : This unittest tests the model framework. This includes testing t
 > Answer:
 
 --- question 8 fill here ---
+
+Even though all the code is
 
 ### Question 9
 

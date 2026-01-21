@@ -1,8 +1,8 @@
-
 from torch.utils.data import DataLoader, TensorDataset
 from mlopsproject.model import CNN
 from pytorch_lightning import Trainer
 import torch
+
 
 def dummy_dataloader():
     x = torch.randn(8, 1, 64, 64)
@@ -12,7 +12,7 @@ def dummy_dataloader():
         dataset,
         batch_size=4,
         num_workers=2,
-        persistent_workers=True
+        persistent_workers=True,
     )
 
 
@@ -21,7 +21,7 @@ def test_lightning_training_loop():
     trainer = Trainer(
         fast_dev_run=True,
         enable_checkpointing=False,
-        logger=False
+        logger=False,
     )
 
     trainer.fit(

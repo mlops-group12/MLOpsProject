@@ -23,10 +23,10 @@ batch_size: 64
 
 # GCS configuration for cross-platform data & model storage
 gcs:
-  bucket: "data-face-emotions"       
-  data_folder: "data_train"  
-  model_folder: "models"         
-  use_mounted_path: false          
+  bucket: "data-face-emotions"
+  data_folder: "data_train"
+  model_folder: "models"
+  use_mounted_path: false
 
 hydra:
   run:

@@ -37,7 +37,7 @@ class TestModel:
         y = torch.randn(1, 5)
 
         model.on_test_start()
-        
+
         y = model.test_step((x, y), batch_idx=0)
 
         assert y is None

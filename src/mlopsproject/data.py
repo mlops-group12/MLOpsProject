@@ -24,7 +24,7 @@ def pull_dvc_data():
     dataset_path = "data"  # path recorded in data.dvc
     if not os.path.isdir(dataset_path):
         raise RuntimeError(
-            f"No valid dataset folder found at {dataset_path} after DVC pull."
+            f"No valid dataset folder found at {dataset_path} after DVC pull.",
         )
 
     print(f"✅ Dataset ready at {dataset_path}")
@@ -39,11 +39,13 @@ def get_dataloaders(seed=0, num_workers=4, train_batch_size=64):
     """
     np.random.seed(seed)
 
-    data_transform = transforms.Compose([
-        transforms.Resize((64, 64)),
-        transforms.Grayscale(),
-        transforms.ToTensor(),
-    ])
+    data_transform = transforms.Compose(
+        [
+            transforms.Resize((64, 64)),
+            transforms.Grayscale(),
+            transforms.ToTensor(),
+        ],
+    )
 
     # Pull DVC dataset first
     dataset_path = pull_dvc_data()
@@ -62,13 +64,22 @@ def get_dataloaders(seed=0, num_workers=4, train_batch_size=64):
 
     # DataLoaders
     train_loader = DataLoader(
-        train_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True
+        train_dataset,
+        num_workers=num_workers,
+        batch_size=train_batch_size,
+        persistent_workers=True,
     )
     val_loader = DataLoader(
-        validation_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True
+        validation_dataset,
+        num_workers=num_workers,
+        batch_size=train_batch_size,
+        persistent_workers=True,
     )
     test_loader = DataLoader(
-        test_dataset, num_workers=num_workers, batch_size=train_batch_size, persistent_workers=True
+        test_dataset,
+        num_workers=num_workers,
+        batch_size=train_batch_size,
+        persistent_workers=True,
     )
 
     print(f"Number of training samples: {len(train_dataset)}")

@@ -6,7 +6,7 @@ between the training dataset and a simulated drifted dataset.
 """
 
 import os
-import subprocess 
+import subprocess
 import numpy as np
 import pandas as pd
 import hydra
@@ -52,7 +52,7 @@ def extract_features(dataloader, max_batches: int):
                     "brightness": brightness,
                     "contrast": contrast,
                     "sharpness": sharpness,
-                }
+                },
             )
 
     return pd.DataFrame.from_records(records)
@@ -64,8 +64,7 @@ def upload_to_gcs(local_path: str, bucket_name: str, gcs_path: str):
     """
     if storage is None:
         raise RuntimeError(
-            "google-cloud-storage is not installed or not available. "
-            "Install it or disable drift.save_to_gcs."
+            "google-cloud-storage is not installed or not available. " "Install it or disable drift.save_to_gcs.",
         )
 
     client = storage.Client()
@@ -74,30 +73,22 @@ def upload_to_gcs(local_path: str, bucket_name: str, gcs_path: str):
     blob.upload_from_filename(local_path)
 
 
-import os
-import shutil
-import subprocess
-
-
 def sync_gcs_images_to_local_classdir(bucket: str, prefix: str, local_root: str, class_name: str = "drift"):
-
     local_class_dir = os.path.join(local_root, class_name)
     os.makedirs(local_class_dir, exist_ok=True)
 
-    
     gcloud_exe = shutil.which("gcloud.cmd") or shutil.which("gcloud")
     if not gcloud_exe:
         raise RuntimeError(
             "gcloud not found on PATH. "
-            "Restart your terminal after installing Google Cloud SDK or add its bin directory to PATH."
+            "Restart your terminal after installing Google Cloud SDK or add its bin directory to PATH.",
         )
-    
+
     gcs_uri = f"gs://{bucket}/{prefix.strip('/')}/"
 
     subprocess.check_call([gcloud_exe, "storage", "cp", "--recursive", gcs_uri, local_root])
 
 
-    
 @hydra.main(
     config_path="../../configs",
     config_name="drift_config",
@@ -120,10 +111,9 @@ def main(cfg: DictConfig):
             transforms.Resize((64, 64)),
             transforms.Grayscale(),
             transforms.ToTensor(),
-        ]
+        ],
     )
 
-   
     drift_root = cfg.drift.celeba_root
 
     if getattr(cfg.drift, "download_from_gcs", False):
