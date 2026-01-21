@@ -1,5 +1,4 @@
 from fastapi import FastAPI, UploadFile, File, BackgroundTasks
-from fastapi.responses import FileResponse
 from PIL import Image
 import torch
 from mlopsproject.model import CNN
@@ -7,10 +6,8 @@ import numpy as np
 from google.cloud import storage
 from datetime import datetime, UTC
 import os
-import os
 import tempfile
 import hydra
-from omegaconf import DictConfig
 
 # -------------------------
 # Initialize Hydra config and help functons
