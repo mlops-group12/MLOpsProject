@@ -18,4 +18,4 @@ ARG MODEL_TIMESTAMP
 ENV MODEL_TIMESTAMP=${MODEL_TIMESTAMP}
 
 
-ENTRYPOINT ["uv", "run", "python", "-m", "src.mlopsproject.train wandb.enabled=false"]
+ENTRYPOINT ["uv", "run", "python", "-m", "src.mlopsproject.train"]
