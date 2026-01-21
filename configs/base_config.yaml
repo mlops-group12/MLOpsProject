@@ -3,7 +3,7 @@
 # or without wandb: python -m src.mlopsproject.train wandb.enabled=false
 
 wandb:
-  enabled: true
+  enabled: false
   project: MLOps_jacob
   entity: mlops12
   group: faces_${epochs}
