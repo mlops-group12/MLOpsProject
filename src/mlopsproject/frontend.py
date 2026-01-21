@@ -2,8 +2,8 @@ import os
 import pandas as pd
 import requests
 import streamlit as st
-from google.cloud import run_v2
-
+#from google.cloud import run_v2
+from io import BytesIO
 
 def get_backend_url():
     """Get the URL of the backend service."""
@@ -11,15 +11,22 @@ def get_backend_url():
     client = run_v2.ServicesClient()
     services = client.list_services(parent=parent)
     for service in services:
-        if service.name.split("/")[-1] == "predict":
+        if service.name.split("/")[-1] == "production_model":
             return service.uri
     return os.environ.get("BACKEND", None)
 
+def get_backend_url():
+    return "https://api-6-675101993887.europe-west1.run.app"
 
-def classify_image(image, backend):
+
+def classify_image(uploaded_file, backend):
     """Send the image to the backend for classification."""
-    predict_url = f"{backend}/predict"
-    response = requests.post(predict_url, files={"image": image}, timeout=10)
+    predict_url = f"{backend}/predict/"
+
+    file_bytes = BytesIO(uploaded_file.read())
+    files = {"data": (uploaded_file.name, file_bytes, uploaded_file.type)}
+    
+    response = requests.post(predict_url, files=files, timeout=30)
     if response.status_code == 200:
         return response.json()
     return None
@@ -37,22 +44,23 @@ def main() -> None:
     uploaded_file = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
 
     if uploaded_file is not None:
-        image = uploaded_file.read()
-        result = classify_image(image, backend=backend)
+        #image = uploaded_file.read()
+        result = classify_image(uploaded_file, backend=backend)
+        print(result)
 
         if result is not None:
-            prediction = result["prediction"]
-            probabilities = result["probabilities"]
+            prediction = result["predicted_emotion"]
+            #probabilities = result["probs"]
 
             # show the image and prediction
-            st.image(image, caption="Uploaded Image")
+            st.image(uploaded_file, caption="Uploaded Image")
             st.write("Prediction:", prediction)
 
             # make a nice bar chart
-            data = {"Class": [f"Class {i}" for i in range(10)], "Probability": probabilities}
-            df = pd.DataFrame(data)
-            df.set_index("Class", inplace=True)
-            st.bar_chart(df, y="Probability")
+            # data = {"Class": [f"Class {i}" for i in range(10)], "Probability": probabilities}
+            # df = pd.DataFrame(data)
+            # df.set_index("Class", inplace=True)
+            # st.bar_chart(df, y="Probability")
         else:
             st.write("Failed to get prediction")
 
