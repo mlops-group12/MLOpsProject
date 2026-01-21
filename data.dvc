@@ -7,8 +7,8 @@ deps:
   hash: md5
   path: gs://data-face-emotions/data
 outs:
-- md5: ed94a3af56df8968f0aaee0b70a6663a.dir
-  size: 733890704
-  nfiles: 59101
+- md5: afe31cdba08eda1dd9f3b76a45e96480.dir
+  size: 734948810
+  nfiles: 59249
   hash: md5
   path: data

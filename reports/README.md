@@ -52,31 +52,31 @@ will check the repositories and the code to verify your answers.
 
 ### Week 1
 
-* [ ] Create a git repository (M5)
-* [ ] Make sure that all team members have write access to the GitHub repository (M5)
-* [ ] Create a dedicated environment for you project to keep track of your packages (M2)
-* [ ] Create the initial file structure using cookiecutter with an appropriate template (M6)
-* [ ] Fill out the `data.py` file such that it downloads whatever data you need and preprocesses it (if necessary) (M6)
-* [ ] Add a model to `model.py` and a training procedure to `train.py` and get that running (M6)
-* [ ] Remember to either fill out the `requirements.txt`/`requirements_dev.txt` files or keeping your
+* [x] Create a git repository (M5)
+* [x] Make sure that all team members have write access to the GitHub repository (M5)
+* [x] Create a dedicated environment for you project to keep track of your packages (M2)
+* [x] Create the initial file structure using cookiecutter with an appropriate template (M6)
+* [x] Fill out the `data.py` file such that it downloads whatever data you need and preprocesses it (if necessary) (M6)
+* [x] Add a model to `model.py` and a training procedure to `train.py` and get that running (M6)
+* [x] Remember to either fill out the `requirements.txt`/`requirements_dev.txt` files or keeping your
     `pyproject.toml`/`uv.lock` up-to-date with whatever dependencies that you are using (M2+M6)
 * [ ] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
 * [ ] Do a bit of code typing and remember to document essential parts of your code (M7)
 * [ ] Setup version control for your data or part of your data (M8)
 * [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
-* [ ] Construct one or multiple docker files for your code (M10)
-* [ ] Build the docker files locally and make sure they work as intended (M10)
-* [ ] Write one or multiple configurations files for your experiments (M11)
-* [ ] Used Hydra to load the configurations and manage your hyperparameters (M11)
+* [x] Construct one or multiple docker files for your code (M10)
+* [x] Build the docker files locally and make sure they work as intended (M10)
+* [x] Write one or multiple configurations files for your experiments (M11)
+* [x] Used Hydra to load the configurations and manage your hyperparameters (M11)
 * [ ] Use profiling to optimize your code (M12)
 * [ ] Use logging to log important events in your code (M14)
 * [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
 * [ ] Consider running a hyperparameter optimization sweep (M14)
-* [ ] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
+* [x] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
 
 ### Week 2
 
-* [ ] Write unit tests related to the data part of your code (M16)
+* [x] Write unit tests related to the data part of your code (M16)
 * [ ] Write unit tests related to model construction and or model training (M16)
 * [ ] Calculate the code coverage (M16)
 * [ ] Get some continuous integration running on the GitHub repository (M17)
@@ -85,15 +85,15 @@ will check the repositories and the code to verify your answers.
 * [ ] Add pre-commit hooks to your version control setup (M18)
 * [ ] Add a continues workflow that triggers when data changes (M19)
 * [ ] Add a continues workflow that triggers when changes to the model registry is made (M19)
-* [ ] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
-* [ ] Create a trigger workflow for automatically building your docker images (M21)
-* [ ] Get your model training in GCP using either the Engine or Vertex AI (M21)
-* [ ] Create a FastAPI application that can do inference using your model (M22)
+* [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
+* [x] Create a trigger workflow for automatically building your docker images (M21)
+* [x] Get your model training in GCP using either the Engine or Vertex AI (M21)
+* [x] Create a FastAPI application that can do inference using your model (M22)
 * [ ] Deploy your model in GCP using either Functions or Run as the backend (M23)
 * [ ] Write API tests for your application and setup continues integration for these (M24)
 * [ ] Load test your application (M24)
 * [ ] Create a more specialized ML-deployment API using either ONNX or BentoML, or both (M25)
-* [ ] Create a frontend for your API (M26)
+* [x] Create a frontend for your API (M26)
 
 ### Week 3
 
@@ -148,7 +148,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 3 fill here ---
+We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning. 
 
 ## Coding environment
 
@@ -168,7 +168,11 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 4 fill here ---
+We used uv to manage both our Python environment and project dependencies. This tool provides a consistent and efficient workflow across all team members and ensures that the project can be easily reproduced by others. Dependency versions are recorded in a uv.lock file, which is committed to the GitHub repository. This lock file guarantees that everyone installs the exact same versions of all packages, ensuring reproducibility across systems.
+To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager). 
+
+Alternatively, if using pip, they can install dependencies with pip install -r requirements.txt. The requirements.txt file is created from the uv.lock file using uv export --format requirements.txt, which can also be installed using uv via uv pip install -r requirements.txt.
+New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade. 
 
 ### Question 5
 
@@ -184,7 +188,9 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 5 fill here ---
+We initialized the project using the provided cookiecutter template and followed its overall structure. We populated the main folders, including src, configs, dockerfiles, and tests, while keeping the template’s organization intact. Within the src directory, we added a frontend.py script to handle the api's frontend-related functionality. We also added an evaluate.dockerfile to the dockerfiles directory for evaluation purposes, a base_config file in configs to store shared configuration settings, and integration tests in the tests directory.
+These additions were made to better separate responsibilities within the project, improve readability, and support smoother collaboration among group members by reducing merge conflicts.
+We deviated slightly from the template by removing the data folder. Instead of storing data locally, our src/data.py module loads data directly from Google Cloud Storage as the dataset is too large to be committed to the repository. For reproducibility, we also included functionality in the data loader to download the dataset directly from Kaggle for users who wish to run the project independently.
 
 ### Question 6
 
@@ -199,7 +205,10 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 6 fill here ---
+What we implemented: 
+
+Following good coding practices is important in larger projects because it improves understandability when reviewing code written by others or when returning to older parts of the project. Since developers often have very individual coding styles, clear structure and documentation help bridge the gap between different approaches and make it easier to understand what specific functions, scripts, or modules are intended to do.
+Additionally, using a standardized project structure, such as a cookiecutter template, helps reduce code duplication and prevents directory-related errors. It furthermore helps maintain an overview of the code structure. Overall, these practices reduce the time and effort required to understand, maintain, and extend code written by others or earlier in the project.
 
 ## Version control
 
@@ -218,7 +227,10 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 7 fill here ---
+test_data.py : Testing the length of the data and that the get_datasets function returns the expected datasets. It also tests for batch shape.
+
+test_model.py : This unittest tests the model framework. This includes testing the shapes after the forward pass, and testing whether or not the training, validation and test step outputs the expected. Finally, the setup is configured to use a single optimizer in the pytorch-lightning framework, so this is also tested for.
+
 
 ### Question 8
 
@@ -248,7 +260,9 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 9 fill here ---
+In this project, we initially set up individual branches for group members to become acquainted with the codebase and avoid conflicts on the main branch. As the project progressed, we also created branches for specific tasks, such as data version control, connecting to Google Cloud Storage, configuring the Cloud Build file, and writing unit and integration tests. This approach reduced merge conflicts by clearly separating work according to task.
+
+All team members were set as repository owners, and pull requests were managed by reviewing the branch history using the Git Graph module. We discussed changes within the group before merging branches into the main branch, ensuring that updates were integrated safely. This process was repeated regularly throughout project days, preventing the accumulation of large conflicts and maintaining a stable main branch.
 
 ### Question 10
 
@@ -263,7 +277,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 10 fill here ---
+DVC was included in this project as a learning tool rather than for its functionality in our specific implementation. However, DVC would be highly valuable in industrial or research settings where data are continuously updated. When data points are added or removed and model predictions change, DVC allows for reproduction of earlier experiments to identify the cause of the changed predictions and verify that they originate from data modifications rather than code changes. DVC is also beneficial when existing data are updated or processed through multiple stages. In such cases, changes in preprocessing can lead to errors or differences in model performance. By versioning each data state, DVC makes it possible to trace back through previous data versions and identify the root cause of such issues.
 
 ### Question 11
 

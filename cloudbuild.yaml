@@ -55,6 +55,25 @@ steps:
       'push',
       'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/api:manual'
     ]
+  
+# -------------------------
+# Build frontend image
+# -------------------------
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'build',
+      '-f', 'dockerfiles/frontend.dockerfile',
+      '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/frontend:manual',
+      '.'
+    ]
+
+- name: 'gcr.io/cloud-builders/docker'
+  args:
+    [
+      'push',
+      'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/frontend:manual'
+    ]
 
 options:
   logging: CLOUD_LOGGING_ONLY   # optional, can still log to Cloud Logging

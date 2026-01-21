@@ -42,6 +42,7 @@ dependencies = [
     "typer==0.15.1",
     "uvicorn==0.34.0",
     "wandb>=0.23.1",
+    "evidently>=0.7.20",
 ]
 
 [dependency-groups]
@@ -76,6 +77,11 @@ line-length = 120
 [tool.coverage.run]
 omit = ["tests/*"]
 
+
+[tool.pytest.ini_options]
+filterwarnings = [
+    "ignore:.*self.log.*trainer.*:UserWarning",
+]
 
 [project.scripts]
 preprocess = "mlopsproject.data:main"
