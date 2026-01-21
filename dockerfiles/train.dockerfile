@@ -9,6 +9,7 @@ COPY pyproject.toml pyproject.toml
 COPY README.md README.md
 COPY src/ src/
 COPY configs /configs
+COPY .dvc/ .dvc/
 
 RUN uv sync --locked --no-cache --no-install-project
 
