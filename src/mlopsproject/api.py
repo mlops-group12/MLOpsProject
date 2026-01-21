@@ -13,12 +13,11 @@ import hydra
 from omegaconf import DictConfig
 
 # -------------------------
-# Initialize Hydra config
+# Initialize Hydra config and help functons
 # -------------------------
 cfg = hydra.compose(config_name="base_config", config_path="../../configs")
 
 app = FastAPI()
-
 DB_FILE = "prediction_database.csv"
 
 def extract_image_features(image: Image.Image):
@@ -52,30 +51,11 @@ def add_to_database(
         )
 
 
-@app.on_event("startup")
-def startup_event():
-    if not os.path.exists(DB_FILE):
-        with open(DB_FILE, "w") as f:
-            f.write(
-                "time,image_name,width,height,brightness,contrast,sharpness,"
-                "predicted_emotion\n"
-            )
-
-
-@app.get("/")
-def read_root():
-    return {"message": "Welcome to the Face Emotions prediction model inference API!"}
-
-@app.post("/predict/")
-async def predict(data: UploadFile = File(...), background_tasks: BackgroundTasks = None):
-    """Predict emotions for an image."""
-    i_image = Image.open(data.file)
-    if i_image.mode != "L": # RGB to greyscale conversion
-        i_image = i_image.convert(mode="L")
-
-    res = i_image.resize((64, 64))
-
-    model = CNN()
+# -------------------------
+# Load model from GCS at startup
+# -------------------------
+model = CNN()
+model_version = None
 
 if cfg.gcs.bucket and cfg.gcs.model_folder:
     client = storage.Client(project="active-premise-484209-h0")
@@ -99,6 +79,14 @@ else:
 
 model.eval()
 
+@app.on_event("startup")
+def startup_event():
+    if not os.path.exists(DB_FILE):
+        with open(DB_FILE, "w") as f:
+            f.write(
+                "time,image_name,width,height,brightness,contrast,sharpness,"
+                "predicted_emotion\n"
+            )
 
 # -------------------------
 # API endpoints
@@ -107,11 +95,9 @@ model.eval()
 def read_root():
     return {"message": "Welcome to the Face Emotions prediction model inference API!"}
 
-
 @app.post("/predict/")
-async def predict(data: UploadFile = File(...)):
+async def predict(data: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Predict emotions for an uploaded image."""
-
     i_image = Image.open(data.file)
     if i_image.mode != "L":
         i_image = i_image.convert(mode="L")
@@ -140,5 +126,5 @@ async def predict(data: UploadFile = File(...)):
             predicted_emotion,
         )
 
-    return {"predicted_emotion": predicted_emotion}
+    return {"predicted_emotion": predicted_emotion, "model_version": model_version}
 
