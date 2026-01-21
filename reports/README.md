@@ -227,6 +227,8 @@ Additionally, using a standardized project structure, such as a cookiecutter tem
 >
 > Answer:
 
+We implemented a total of 7 unittests testing different parts of the data and the model. For the data we tested the batchsize after dataloading and the size of the dataset. for the model we tested if the model can run a forward step and each of training, test and validation step. Additionally we tested the optimizer. We also created some implementation tests, testing the dataloading and the frontend API.
+
 --- question 7 fill here ---
 
 ### Question 8
@@ -241,6 +243,8 @@ Additionally, using a standardized project structure, such as a cookiecutter tem
 > *code and even if we were then...*
 >
 > Answer:
+
+we have a total code coverage of 79% but most of the important parts of the code is covered.
 
 --- question 8 fill here ---
 
