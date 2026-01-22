@@ -9,15 +9,11 @@ import os
 import tempfile
 
 
-MODEL_PATH = "models"
-BUCKET = "data-face-emotions"     
-
-# -------------------------
-# Initialize Hydra config and help functons
-# -------------------------
-
 app = FastAPI()
 DB_FILE = "prediction_database.csv"
+MODEL_PATH = "models"
+BUCKET = "data-face-emotions"    
+
 
 def extract_image_features(image: Image.Image):
     img = np.array(image, dtype=np.float32)
@@ -49,34 +45,35 @@ def add_to_database(
             f"{predicted_emotion}\n"
         )
 
+def load_model_from_gcs():
+    model = CNN()
+    model_version = None
 
-# -------------------------
-# Load model from GCS at startup
-# -------------------------
-model = CNN()
-model_version = None
+    if BUCKET and MODEL_PATH:
+        client = storage.Client(project="active-premise-484209-h0")
+        bucket = client.bucket(BUCKET)
+        blobs = list(bucket.list_blobs(prefix=MODEL_PATH))
+        model_blobs = [b for b in blobs if b.name.endswith(".pt")]
 
-if BUCKET and MODEL_PATH:
-    client = storage.Client(project="active-premise-484209-h0")
-    bucket = client.bucket(BUCKET)
-    blobs = list(bucket.list_blobs(prefix=MODEL_PATH))
-    model_blobs = [b for b in blobs if b.name.endswith(".pt")]
-
-    if model_blobs:
-        # Pick latest model by timestamp in filename
-        latest_blob = max(model_blobs, key=lambda b: b.name)
-        tmp_dir = tempfile.mkdtemp()
-        gcs_model_path = os.path.join(tmp_dir, os.path.basename(latest_blob.name))
-        print(f"Downloading latest model from GCS: {latest_blob.name} -> {gcs_model_path}")
-        latest_blob.download_to_filename(gcs_model_path)
-        model.load_state_dict(torch.load(gcs_model_path))
-        model_version = os.path.basename(gcs_model_path).split("_")[-1].replace(".pt", "")
+        if model_blobs:
+            # Pick latest model by timestamp in filename
+            latest_blob = max(model_blobs, key=lambda b: b.name)
+            tmp_dir = tempfile.mkdtemp()
+            gcs_model_path = os.path.join(tmp_dir, os.path.basename(latest_blob.name))
+            print(f"Downloading latest model from GCS: {latest_blob.name} -> {gcs_model_path}")
+            latest_blob.download_to_filename(gcs_model_path)
+            model.load_state_dict(torch.load(gcs_model_path))
+            model_version = os.path.basename(gcs_model_path).split("_")[-1].replace(".pt", "")
+        else:
+            raise RuntimeError("No models found in GCS bucket.")
     else:
-        raise RuntimeError("No models found in GCS bucket.")
-else:
-    raise RuntimeError("GCS bucket or model folder not configured.")
+        raise RuntimeError("GCS bucket or model folder not configured.")
 
-model.eval()
+    model.eval()
+
+    return model, model_version
+        
+
 
 @app.on_event("startup")
 def startup_event():
@@ -97,6 +94,8 @@ def read_root():
 @app.post("/predict/")
 async def predict(data: UploadFile = File(...), background_tasks: BackgroundTasks = None):
     """Predict emotions for an uploaded image."""
+    model, model_version = load_model_from_gcs()
+
     i_image = Image.open(data.file)
     if i_image.mode != "L":
         i_image = i_image.convert(mode="L")
@@ -107,6 +106,7 @@ async def predict(data: UploadFile = File(...), background_tasks: BackgroundTask
         tensor_image = torch.from_numpy(img_np).unsqueeze(0).unsqueeze(0)
         output = model(tensor_image)
         predicted = torch.argmax(output.squeeze())
+        probs = output.squeeze().numpy()
         class_names = ["angry", "fear", "happy", "sad", "surprise"]
         predicted_emotion = class_names[predicted.item()]
 
@@ -125,5 +125,11 @@ async def predict(data: UploadFile = File(...), background_tasks: BackgroundTask
             predicted_emotion,
         )
 
-    return {"predicted_emotion": predicted_emotion, "model_version": model_version}
+    return {
+        "predicted_emotion": predicted_emotion,
+        "model_version": model_version,
+        "probs": probs.tolist()
+        }
+
+
 
