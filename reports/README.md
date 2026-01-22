@@ -443,7 +443,9 @@ For our project, we developed separate Dockerfiles for training, evaluation, the
 >
 > Answer:
 
---- question 21 fill here ---
+We managed to train our model in the cloud using vertex AI. We did this by creating a custom job which used a training docker image we had stored in the artifact registry. We configured the job to run on a CPU-based machine because our Docker images aren’t set up to handle GPU support. Thus, the cloud training didn’t provide any actual advantage to running locally in terms of speed. As a result, most experiments were conducted locally, while Vertex AI was only used to test if our cloud infrastructure worked correctly.
+Vertex AI was chosen because it provides a managed interface for running custom containers, integrates seamlessly with Artifact Registry, and allows training jobs to be launched without managing underlying infrastructure.
+
 
 ### Question 22
 
