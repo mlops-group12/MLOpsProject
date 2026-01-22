@@ -1,4 +1,4 @@
-name: "Workflow for linting and pytest"
+name: "Workflow for linting"
 
 on:
   push:
