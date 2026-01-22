@@ -1,21 +1,25 @@
 """
 Model Training Module
 
-This module provides functionality for training CNN models using PyTorch Lightning.
-It handles data loading, model initialization, training loop, and model checkpointing.
+Trains a CNN using PyTorch Lightning on a pre-pulled dataset.
+Always saves and uploads a single canonical model artifact: model-latest.pt
 """
 
 from mlopsproject.model import CNN
 from mlopsproject.data import get_dataloaders
+
 from pytorch_lightning import Trainer
 import pytorch_lightning as pl
+
 import hydra
-import torch
 from omegaconf import DictConfig
+
+import torch
 import os
+import datetime
+
 from google.cloud import storage
 import wandb
-import datetime
 
 
 @hydra.main(
@@ -25,32 +29,45 @@ import datetime
 )
 def main(cfg: DictConfig):
     """
-    Train a CNN model on the dataset.
-
-    This function orchestrates the training process:
-    1. Loads and prepares data (train/validation splits)
-    2. Initializes the CNN model with specified hyperparameters
-    3. Sets up optional WandB logging
-    4. Trains the model using PyTorch Lightning
-    5. Saves model weights if configured
+    Orchestrates model training:
+    1. Loads dataset (assumed pre-pulled)
+    2. Initializes model
+    3. Trains using PyTorch Lightning
+    4. Saves model as model-latest.pt
+    5. Uploads model to GCS (overwrites)
     """
+
+    # -------------------------
+    # Training parameters
+    # -------------------------
     max_epochs = cfg.epochs
     lr = cfg.lr
 
+    print("Starting training job")
+    print(f"Epochs: {max_epochs}, LR: {lr}")
+
     # -------------------------
-    # Data loading via DVC
+    # Data loading
     # -------------------------
-    train_data, validation_data, test_data = get_dataloaders(num_workers=2)
+    print("Loading dataset...")
+    train_loader, val_loader, _ = get_dataloaders(num_workers=2)
 
     # -------------------------
     # Model initialization
     # -------------------------
     model = CNN(learning_rate=lr)
-    print("device:", model.device)
+    print("Model initialized")
+    print("Device:", model.device)
 
     # -------------------------
     # WandB logger
     # -------------------------
+    logger = None
+    run_tag = os.getenv(
+        "MODEL_TIMESTAMP",
+        datetime.datetime.now().strftime("%Y%m%d_%H%M%S"),
+    )
+
     if cfg.wandb.enabled:
         logger = pl.loggers.WandbLogger(
             project=cfg.wandb.project,
@@ -58,49 +75,55 @@ def main(cfg: DictConfig):
             group=cfg.wandb.group,
             mode=cfg.wandb.mode,
         )
-    else:
-        logger = None
+        wandb.run.name = f"faces_{run_tag}"
 
     # -------------------------
-    # Trainer and fit
+    # Trainer
     # -------------------------
-    trainer = Trainer(max_epochs=max_epochs, logger=logger)
-    trainer.fit(model, train_dataloaders=train_data, val_dataloaders=validation_data)
+    trainer = Trainer(
+        max_epochs=max_epochs,
+        logger=logger,
+    )
+
+    trainer.fit(
+        model,
+        train_dataloaders=train_loader,
+        val_dataloaders=val_loader,
+    )
 
     # -------------------------
-    # Model versioning
+    # Save model (latest-only)
     # -------------------------
-    model_version = os.getenv("MODEL_TIMESTAMP") or datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    print(f"Using MODEL_VERSION = {model_version}")
-
-    # Local save path
-    local_model_path = f"models/model_{model_version}.pt"
+    local_model_path = "models/model-latest.pt"
     os.makedirs(os.path.dirname(local_model_path), exist_ok=True)
 
-    # Save model locally
     if cfg.save_model:
         torch.save(model.state_dict(), local_model_path)
         print(f"Model saved locally at {local_model_path}")
 
     # -------------------------
-    # Optional upload to GCS
+    # Upload to GCS (overwrite)
     # -------------------------
     if cfg.gcs.bucket and cfg.gcs.model_folder:
         try:
-            client = storage.Client(project="active-premise-484209-h0")
+            client = storage.Client(project=cfg.gcs.project)
             bucket = client.bucket(cfg.gcs.bucket)
-            blob = bucket.blob(f"{cfg.gcs.model_folder}/model_{model_version}.pt")
+
+            blob = bucket.blob(
+                f"{cfg.gcs.model_folder}/model-latest.pt"
+            )
             blob.upload_from_filename(local_model_path)
-            print(f"Model uploaded to GCS at gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model_{model_version}.pt")
+
+            print(
+                f"Model uploaded to "
+                f"gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model-latest.pt"
+            )
+
         except Exception as e:
-            print("Skipping GCS upload. Could not connect to Google Cloud Storage.")
+            print("Failed to upload model to GCS")
             print("Reason:", e)
 
-    # -------------------------
-    # WandB run name
-    # -------------------------
-    if cfg.wandb.enabled:
-        wandb.run.name = f"faces_{model_version}"
+    print("Training job completed successfully")
 
 
 if __name__ == "__main__":
