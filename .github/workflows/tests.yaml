@@ -45,6 +45,12 @@ jobs:
     - name: Install dependencies
       run: |
         uv sync --dev
+    - name: Cache pre-commit
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+
 
     - name: Run pre-commit hooks
       run: |
