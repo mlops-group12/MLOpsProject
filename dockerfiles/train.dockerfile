@@ -16,8 +16,6 @@ RUN python -m pip install --no-cache-dir "dvc[gcs]"
 
 COPY .dvc/ .dvc/
 COPY .dvcignore .dvcignore
-COPY dvc.yaml dvc.yaml
-COPY dvc.lock dvc.lock
 COPY data/train_data.dvc data/train_data.dvc
 
 
