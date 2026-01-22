@@ -591,7 +591,15 @@ Group member s181487 used x, group member s214613 used x, group member s214644 u
 >
 > Answer:
 
---- question 29 fill here ---
+The [Figure](figures/architecture.png) describe the overall architecture of our system.
+
+The central element of our system architecture is the developer, who can choose to work either locally or in the cloud. Locally, the developer can run our face detection model for training or evaluation, both of which are configurable through config files that log the chosen model setup, with optional logging to Weights & Biases (WandB). The output of training is a model that can be used by an API, which connects to a frontend interface where users can upload images and receive emotion predictions.
+
+The given image input details are stored to enable later analysis of data drift 
+
+In the cloud workflow, the developer begins by committing code to GitHub, which triggers GitHub Actions workflows. These workflows first perform unit tests, linting, and integration tests to ensure code quality. If the commit is on the main branch, the workflow continues by building new Docker images, which are stored in the Artifact Registry. The registry contains four images: the training and evaluation images, which run on Vertex AI to create models, logging relevant information to WandB, with the trained models and data stored in a cloud bucket that developers can access using DVC; and the API and frontend images, which can be deployed separately. Once the training is complete, the API image can be deployed with the trained model, providing an endpoint for predictions. After that, the frontend image can be deployed, configured to use the API URL to create an interface where users can upload images and receive emotion predictions. 
+
+In addition, developers can always choose to clone the GitHub repository to work locally or modify the workflow.
 
 ### Question 30
 
