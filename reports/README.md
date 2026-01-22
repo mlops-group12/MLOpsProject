@@ -148,7 +148,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
---- question 3 fill here ---
+We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning. 
 
 ## Coding environment
 
@@ -229,7 +229,10 @@ Additionally, using a standardized project structure, such as a cookiecutter tem
 
 We implemented a total of 7 unittests testing different parts of the data and the model. For the data we tested the batchsize after dataloading and the size of the dataset. for the model we tested if the model can run a forward step and each of training, test and validation step. Additionally we tested the optimizer. We also created some implementation tests, testing the dataloading and the frontend API.
 
---- question 7 fill here ---
+test_data.py : Testing the length of the data and that the get_datasets function returns the expected datasets. It also tests for batch shape.
+
+test_model.py : This unittest tests the model framework. This includes testing the shapes after the forward pass, and testing whether or not the training, validation and test step outputs the expected. Finally, the setup is configured to use a single optimizer in the pytorch-lightning framework, so this is also tested for.
+
 
 ### Question 8
 

@@ -214,6 +214,7 @@ data/fear
 data/Happy
 data/Sad
 data/Suprise
+data/celeba
 
 
 #uv lock
@@ -232,3 +233,4 @@ models/
 
 lightning_logs/
 /temp_data_test
+.dvc/

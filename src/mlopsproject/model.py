@@ -115,7 +115,7 @@ class CNN(LightningModule):
 
         return loss
 
-    def validation_step(self, batch: tuple[Tensor, Tensor]) -> None:
+    def validation_step(self, batch: tuple[Tensor, Tensor], batch_idx: int) -> None:
         """
         Validation step for PyTorch Lightning.
 
@@ -129,7 +129,7 @@ class CNN(LightningModule):
         self.log("val_loss", loss, on_epoch=True)
         self.log("val_acc", acc, on_epoch=True)
 
-    def test_step(self, batch: tuple[Tensor, Tensor]) -> None:
+    def test_step(self, batch: tuple[Tensor, Tensor], batch_idx: int) -> None:
         """
         Test step for PyTorch Lightning.
 
@@ -138,6 +138,10 @@ class CNN(LightningModule):
         """
         data, target = batch
         preds = self(data)
+
+        self.test_preds.append(preds.argmax(dim=-1).cpu())
+        self.test_targets.append(target.cpu())
+
         loss = self.criterion(preds, target)
         acc = (target == preds.argmax(dim=-1)).float().mean()
         self.log("test_loss", loss, on_epoch=True)
@@ -155,17 +159,3 @@ class CNN(LightningModule):
     def on_test_start(self):
         self.test_preds = []
         self.test_targets = []
-
-    def test_step(self, batch, batch_idx):
-        data, target = batch
-        preds = self(data)
-
-        self.test_preds.append(preds.argmax(dim=-1).cpu())
-        self.test_targets.append(target.cpu())
-
-        loss = self.criterion(preds, target)
-        acc = (target == preds.argmax(dim=-1)).float().mean()
-
-        self.log("test_loss", loss, on_epoch=True)
-        self.log("test_acc", acc, on_epoch=True)
-
