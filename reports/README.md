@@ -68,10 +68,10 @@ will check the repositories and the code to verify your answers.
 * [x] Build the docker files locally and make sure they work as intended (M10)
 * [x] Write one or multiple configurations files for your experiments (M11)
 * [x] Used Hydra to load the configurations and manage your hyperparameters (M11)
-* [ ] Use profiling to optimize your code (M12)
+* [x] Use profiling to optimize your code (M12)
 * [x] Use logging to log important events in your code (M14)
 * [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
-* [ ] Consider running a hyperparameter optimization sweep (M14)
+* [x] Consider running a hyperparameter optimization sweep (M14)
 * [x] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
 
 ### Week 2
@@ -366,7 +366,7 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 Our configuration file contains several hyperparameters, however in this experiment, we focus on comparing different values for the learning rate and the number of epochs.
 First, we compare training the model using different learning rates, as shown in this [Figure](figures/sweep_lr.png). We evaluate learning rates of $[3×10^{-4},5×10^{-4},7×10^{-4}]$ , all trained for 10 epochs. From the figure, we observe no significant differences in performance among the three learning rates, all of the curves follow echother closly ending with a validation accucarcy at around 0.65 and validation loss just under 0.9. Therefore, when testing the number of epochs, we select the middle learning rate of $5×10^{-4}$. Nevertheless, evaluating the learning rate is important because it determines how efficiently and stably the model learns during training. An inappropriate learning rate can lead to slow convergence or unstable training, even if the model architecture is well chosen.
 
-Next, we examine the number of epochs to identify a “sweet spot” where performance continues to improve without unnecessary additional training that yields no significant gains. As shown in the [Figure](figures/sweep_epoch.png), the performance begins to plateau around step x, which corresponds to approximately x epochs.
+Next, we examine the number of epochs to identify a “sweet spot” where performance continues to improve without unnecessary additional training that yields no significant gains. As shown in the [Figure](figures/sweep_epoch.png), the performance begins to plateau around step 15k, which corresponds to approximately 20 epochs. However, increasing the number of epochs may still lead to minor performance improvements, but these gains may not justify the additional computational cost. After around 20 epochs, the model appears to begin diverging slowly.
 
 In addition to the hyperparameters considered here, one could also investigate other factors, such as batch size or model hyperparameters, including the number of layers or the number of units per layer.
 
@@ -399,7 +399,9 @@ For our project, we developed separate Dockerfiles for training, evaluation, the
 >
 > Answer:
 
---- question 16 fill here ---
+During code development, we inevitably encountered errors and bugs. To minimize their impact, we used error messages and warnings in appropriate places. For example, a ValueError was raised when attempting to load a model that could not be found. Additionally, when errors occurred, as they often do during development, we frequently used print statements to verify that the program was running as expected and to help locate the source of the issue. 
+The [Figure](figures/profile.png) shows the profiling results for our training script. From this, we can identify that the data loader is the most time-consuming task. Although the time per call is relatively low, it is invoked nearly 6,000 times, resulting in a high total runtime. In contrast, saving checkpoints takes roughly twice as long per call, but since it is only executed eight times, it contributes far less to the overall runtime.
+
 
 ## Working in the cloud
 

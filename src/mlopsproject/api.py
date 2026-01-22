@@ -15,11 +15,11 @@ BUCKET = "data-face-emotions"
 # -------------------------
 # Initialize Hydra config and help functons
 # -------------------------
-
 app = FastAPI()
 DB_FILE = "prediction_database.csv"
 
 def extract_image_features(image: Image.Image):
+    """Extract basic features from the image: width, height, brightness, contrast, sharpness."""
     img = np.array(image, dtype=np.float32)
 
     height, width = img.shape
@@ -42,6 +42,7 @@ def add_to_database(
     sharpness: float,
     predicted_emotion: str,
 ):
+    """Append a new prediction entry to the database CSV file."""
     with open(DB_FILE, "a") as f:
         f.write(
             f"{now},{image_name},{width},{height},"
@@ -80,6 +81,7 @@ model.eval()
 
 @app.on_event("startup")
 def startup_event():
+    """Create the prediction database file if it doesn't exist."""
     if not os.path.exists(DB_FILE):
         with open(DB_FILE, "w") as f:
             f.write(
@@ -92,6 +94,7 @@ def startup_event():
 # -------------------------
 @app.get("/")
 def read_root():
+    """Root endpoint."""
     return {"message": "Welcome to the Face Emotions prediction model inference API!"}
 
 @app.post("/predict/")
