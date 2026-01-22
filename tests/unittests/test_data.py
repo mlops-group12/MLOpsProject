@@ -42,6 +42,7 @@ def test_my_dataset(fixture_get_datasets):
 
     print("Dataset length test passed.")
 
+
 @pytest.mark.skip(reason="Requires data download which is skipped in CI")
 def test_my_dataloader_batch_shape(fixture_get_dataloaders):
     x, y = next(iter(fixture_get_dataloaders[0]))
