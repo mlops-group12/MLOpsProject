@@ -208,7 +208,7 @@ __marimo__/
 
 
 # data
-data/
+data
 data/.DS_Store
 data/Angry
 data/fear
@@ -224,7 +224,6 @@ data/celeba
 # outputs
 outputs/
 
-
 # wandb
 wandb/
 
@@ -233,4 +232,5 @@ models/
 
 lightning_logs/
 /temp_data_test
-.dvc/
+.dvc/cache/
+.dvc/tmp/

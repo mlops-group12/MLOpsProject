@@ -21,7 +21,6 @@ import datetime
 from google.cloud import storage
 import wandb
 
-
 @hydra.main(
     config_path="../../configs",
     config_name="base_config",
