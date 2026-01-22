@@ -460,6 +460,8 @@ Our Container registry can be seen in [Figure](figures/registry.png), where we h
 >
 > Answer:
 
+In the [Figure](figures/build.png) we show the latest build, some that failed but most succed.
+
 ### Question 22
 
 > **Did you manage to train your model in the cloud using either the Engine or Vertex AI? If yes, explain how you did**
