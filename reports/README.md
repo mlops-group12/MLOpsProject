@@ -298,7 +298,11 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
---- question 11 fill here ---
+Currently our continuous integration is build upon doing unittests, integration tests and linting. This is currently all done in the same workflow. This has the advantage of not creating too many virtual environments. However, it could also be considered to split it into multiple virtual machine, such that one test doens't depend on the one before.
+
+Th
+
+
 
 ## Running code and tracking experiments
 
