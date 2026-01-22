@@ -1,6 +1,6 @@
 steps:
 # -------------------------
-# Build train image  
+# Build train image
 # -------------------------
 - name: 'gcr.io/cloud-builders/docker'
   args:
@@ -55,7 +55,7 @@ steps:
       'push',
       'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/api:manual'
     ]
-  
+
 # -------------------------
 # Build frontend image
 # -------------------------
