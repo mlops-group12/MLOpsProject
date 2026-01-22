@@ -60,44 +60,44 @@ will check the repositories and the code to verify your answers.
 * [x] Add a model to `model.py` and a training procedure to `train.py` and get that running (M6)
 * [x] Remember to either fill out the `requirements.txt`/`requirements_dev.txt` files or keeping your
     `pyproject.toml`/`uv.lock` up-to-date with whatever dependencies that you are using (M2+M6)
-* [ ] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
-* [ ] Do a bit of code typing and remember to document essential parts of your code (M7)
-* [ ] Setup version control for your data or part of your data (M8)
+* [x] Remember to comply with good coding practices (`pep8`) while doing the project (M7)
+* [x] Do a bit of code typing and remember to document essential parts of your code (M7)
+* [x] Setup version control for your data or part of your data (M8)
 * [ ] Add command line interfaces and project commands to your code where it makes sense (M9)
 * [x] Construct one or multiple docker files for your code (M10)
 * [x] Build the docker files locally and make sure they work as intended (M10)
 * [x] Write one or multiple configurations files for your experiments (M11)
 * [x] Used Hydra to load the configurations and manage your hyperparameters (M11)
-* [ ] Use profiling to optimize your code (M12)
-* [ ] Use logging to log important events in your code (M14)
-* [ ] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
-* [ ] Consider running a hyperparameter optimization sweep (M14)
+* [x] Use profiling to optimize your code (M12)
+* [x] Use logging to log important events in your code (M14)
+* [x] Use Weights & Biases to log training progress and other important metrics/artifacts in your code (M14)
+* [x] Consider running a hyperparameter optimization sweep (M14)
 * [x] Use PyTorch-lightning (if applicable) to reduce the amount of boilerplate in your code (M15)
 
 ### Week 2
 
 * [x] Write unit tests related to the data part of your code (M16)
-* [ ] Write unit tests related to model construction and or model training (M16)
-* [ ] Calculate the code coverage (M16)
-* [ ] Get some continuous integration running on the GitHub repository (M17)
-* [ ] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
-* [ ] Add a linting step to your continuous integration (M17)
-* [ ] Add pre-commit hooks to your version control setup (M18)
+* [x] Write unit tests related to model construction and or model training (M16)
+* [x] Calculate the code coverage (M16)
+* [x] Get some continuous integration running on the GitHub repository (M17)
+* [x] Add caching and multi-os/python/pytorch testing to your continuous integration (M17)
+* [x] Add a linting step to your continuous integration (M17)
+* [x] Add pre-commit hooks to your version control setup (M18)
 * [ ] Add a continues workflow that triggers when data changes (M19)
 * [ ] Add a continues workflow that triggers when changes to the model registry is made (M19)
 * [x] Create a data storage in GCP Bucket for your data and link this with your data version control setup (M21)
 * [x] Create a trigger workflow for automatically building your docker images (M21)
 * [x] Get your model training in GCP using either the Engine or Vertex AI (M21)
 * [x] Create a FastAPI application that can do inference using your model (M22)
-* [ ] Deploy your model in GCP using either Functions or Run as the backend (M23)
-* [ ] Write API tests for your application and setup continues integration for these (M24)
-* [ ] Load test your application (M24)
+* [x] Deploy your model in GCP using either Functions or Run as the backend (M23)
+* [x] Write API tests for your application and setup continues integration for these (M24)
+* [x] Load test your application (M24)
 * [ ] Create a more specialized ML-deployment API using either ONNX or BentoML, or both (M25)
 * [x] Create a frontend for your API (M26)
 
 ### Week 3
 
-* [ ] Check how robust your model is towards data drifting (M27)
+* [x] Check how robust your model is towards data drifting (M27)
 * [x] Setup collection of input-output data from your deployed application (M27)
 * [ ] Deploy to the cloud a drift detection API (M27)
 * [ ] Instrument your API with a couple of system metrics (M28)
@@ -112,9 +112,9 @@ will check the repositories and the code to verify your answers.
 * [ ] Write some documentation for your application (M32)
 * [ ] Publish the documentation to GitHub Pages (M32)
 * [ ] Revisit your initial project description. Did the project turn out as you wanted?
-* [ ] Create an architectural diagram over your MLOps pipeline
-* [ ] Make sure all group members have an understanding about all parts of the project
-* [ ] Uploaded all your code to GitHub
+* [x] Create an architectural diagram over your MLOps pipeline
+* [x] Make sure all group members have an understanding about all parts of the project
+* [x] Uploaded all your code to GitHub
 
 ## Group information
 
@@ -249,8 +249,6 @@ test_model.py : This unittest tests the model framework. This includes testing t
 
 we have a total code coverage of 79% but most of the important parts of the code is covered.
 
---- question 8 fill here ---
-
 ### Question 9
 
 > **Did you workflow include using branches and pull requests? If yes, explain how. If not, explain how branches and**
@@ -298,7 +296,19 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
---- question 11 fill here ---
+Currently our continuous integration is build upon two different workflows:
+- a pytest workflow
+- a linting workflow
+
+and we have also added a dependabot workflow to allow for updates to the environment. 
+
+The pytest workflow runs on multiple os systems, specifically ubuntu, windows and macos (the latest available versions).
+
+Both the pytest and linting workflow uses caching to speed up the continuous pipeline.
+
+Here is an example:
+
+
 
 ## Running code and tracking experiments
 
@@ -353,7 +363,12 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 14 fill here ---
+Our configuration file contains several hyperparameters, however in this experiment, we focus on comparing different values for the learning rate and the number of epochs.
+First, we compare training the model using different learning rates, as shown in this [Figure](figures/sweep_lr.png). We evaluate learning rates of $[3×10^{-4},5×10^{-4},7×10^{-4}]$ , all trained for 10 epochs. From the figure, we observe no significant differences in performance among the three learning rates, all of the curves follow echother closly ending with a validation accucarcy at around 0.65 and validation loss just under 0.9. Therefore, when testing the number of epochs, we select the middle learning rate of $5×10^{-4}$. Nevertheless, evaluating the learning rate is important because it determines how efficiently and stably the model learns during training. An inappropriate learning rate can lead to slow convergence or unstable training, even if the model architecture is well chosen.
+
+Next, we examine the number of epochs to identify a “sweet spot” where performance continues to improve without unnecessary additional training that yields no significant gains. As shown in the [Figure](figures/sweep_epoch.png), the performance begins to plateau around step 15k, which corresponds to approximately 20 epochs. However, increasing the number of epochs may still lead to minor performance improvements, but these gains may not justify the additional computational cost. After around 20 epochs, the model appears to begin diverging slowly.
+
+In addition to the hyperparameters considered here, one could also investigate other factors, such as batch size or model hyperparameters, including the number of layers or the number of units per layer.
 
 ### Question 15
 
@@ -368,7 +383,8 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 15 fill here ---
+For our project, we developed separate Dockerfiles for training, evaluation, the API, and the frontend. We build our Docker images via Google Cloud run, which triggers when we push to the main branch of the repo. We used Docker to ensure that our applications can run on any PC, as they run on a virtual machine with the same settings. Here is a link to the GitHub location of our train Dockerfile https://github.com/mlops-group12/MLOpsProject/blob/main/dockerfiles/train.dockerfile. To run the training docker image: "docker run --rm europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest" which will run the latest training file in the google cloud artifact registry.
+ 
 
 ### Question 16
 
@@ -383,7 +399,9 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 16 fill here ---
+During code development, we inevitably encountered errors and bugs. To minimize their impact, we used error messages and warnings in appropriate places. For example, a ValueError was raised when attempting to load a model that could not be found. Additionally, when errors occurred, as they often do during development, we frequently used print statements to verify that the program was running as expected and to help locate the source of the issue. 
+The [Figure](figures/profile.png) shows the profiling results for our training script. From this, we can identify that the data loader is the most time-consuming task. Although the time per call is relatively low, it is invoked nearly 6,000 times, resulting in a high total runtime. In contrast, saving checkpoints takes roughly twice as long per call, but since it is only executed eight times, it contributes far less to the overall runtime.
+
 
 ## Working in the cloud
 
@@ -433,7 +451,7 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 20 fill here ---
+Our Container registry can be seen in [Figure](figures/registry.png), where we have 4 containers api, evaluate, frontend and train.
 
 ### Question 21
 
@@ -442,7 +460,7 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 21 fill here ---
+In the [Figure](figures/build.png) we show the latest build, some that failed but most succed.
 
 ### Question 22
 
@@ -457,7 +475,8 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 22 fill here ---
+We managed to train our model in the cloud using vertex AI. We did this by creating a custom job which used a training docker image we had stored in the artifact registry. We configured the job to run on a CPU-based machine because our Docker images aren’t set up to handle GPU support. Thus, the cloud training didn’t provide any actual advantage to running locally in terms of speed. As a result, most experiments were conducted locally, while Vertex AI was only used to test if our cloud infrastructure worked correctly.
+Vertex AI was chosen because it provides a managed interface for running custom containers, integrates seamlessly with Artifact Registry, and allows training jobs to be launched without managing underlying infrastructure.
 
 ## Deployment
 
@@ -541,7 +560,7 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 27 fill here ---
+Group member s181487 used x, group member s214613 used x, group member s214644 used x and group member s206759 used x. So in total x credits was spend during the course and project.
 
 ### Question 28
 
@@ -557,7 +576,7 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 28 fill here ---
+We successfully implemented a frontend for our API that can run locally, allowing users to upload an image, display it, and receive an emotion prediction. Additionally, we created a Dockerfile for deployment, however, when attempting to deploy it on Google Cloud, we encountered issues that, given the time available, we were unable to resolve.
 
 ### Question 29
 
@@ -574,7 +593,15 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 29 fill here ---
+The [Figure](figures/architecture.png) describe the overall architecture of our system.
+
+The central element of our system architecture is the developer, who can choose to work either locally or in the cloud. Locally, the developer can run our face detection model for training or evaluation, both of which are configurable through config files that log the chosen model setup, with optional logging to Weights & Biases (WandB). The output of training is a model that can be used by an API, which connects to a frontend interface where users can upload images and receive emotion predictions.
+
+The given image input details are stored to enable later analysis of data drift 
+
+In the cloud workflow, the developer begins by committing code to GitHub, which triggers GitHub Actions workflows. These workflows first perform unit tests, linting, and integration tests to ensure code quality. If the commit is on the main branch, the workflow continues by building new Docker images, which are stored in the Artifact Registry. The registry contains four images: the training and evaluation images, which run on Vertex AI to create models, logging relevant information to WandB, with the trained models and data stored in a cloud bucket that developers can access using DVC; and the API and frontend images, which can be deployed separately. Once the training is complete, the API image can be deployed with the trained model, providing an endpoint for predictions. After that, the frontend image can be deployed, configured to use the API URL to create an interface where users can upload images and receive emotion predictions. 
+
+In addition, developers can always choose to clone the GitHub repository to work locally or modify the workflow.
 
 ### Question 30
 

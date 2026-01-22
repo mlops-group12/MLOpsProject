@@ -10,6 +10,9 @@ This repository contains the implementation for our Machine learning operations 
 | Nikolaj Hertz | s214644 |
 | Signe Djernis Olsen | s206759 |
 
+## The overall architecture of our system
+![architecture](reports/figures/architecture.png)
+
 ## Overall Goal of the Project
 The goal of this project is to design, implement and evaluate a Convolutional Neural Network capable of classifying emotions in images of human faces. The model will take an image as input and output a five-dimensional probability vector that represents the likelihood of the image belonging to each of the predefined classes. The Human Face emotion dataset from Kaggle, which contains images from five distinct classes corresponding to the emotions: angry, happy, sad, fear, and surprised.
 
@@ -31,33 +34,48 @@ The directory structure of the project looks like this:
 │   └── workflows/
 │       └── tests.yaml
 ├── configs/                  # Configuration files
+│   ├── base_config.yaml
+│   └── drift_config.yaml
 ├── data/                     # Data directory
-│   └── DATA
+│   ├── Angry
+│   ├── Fear
+│   ├── Happy
+│   ├── Sad
+│   └── Surprise
 ├── dockerfiles/              # Dockerfiles
 │   ├── api.Dockerfile
+│   ├── evaluate.Dockerfile
+│   ├── frontend.Dockerfile
 │   └── train.Dockerfile
 ├── docs/                     # Documentation
 │   ├── mkdocs.yml
 │   └── source/
 │       └── index.md
 ├── models/                   # Trained models
-├── notebooks/                # Jupyter notebooks
 ├── reports/                  # Reports
-│   └── figures/
+│   ├── figures/
+│   └── README.md
 ├── src/                      # Source code
 │   ├── project_name/
 │   │   ├── __init__.py
 │   │   ├── api.py
 │   │   ├── data.py
+│   │   ├── drift.py
 │   │   ├── evaluate.py
+│   │   ├── frontend.py
 │   │   ├── models.py
+│   │   ├── prediction_database.csv
 │   │   ├── train.py
 │   │   └── visualize.py
-└── tests/                    # Tests
-│   ├── __init__.py
-│   ├── test_api.py
-│   ├── test_data.py
-│   └── test_model.py
+├── tests/                    # Tests
+│   ├── integrationtests
+│   │   ├── test_apis.py
+│   │   └── test_integration_model.py
+│   ├── unittests  
+│   │   ├── test_data.py
+│   │   └── test_model.py              
+│   └── __init__.py
+├── wandb/                    # Weight and Biases
 ├── .gitignore
 ├── .pre-commit-config.yaml
 ├── LICENSE
