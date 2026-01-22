@@ -21,7 +21,7 @@ def test_post_predict_no_file():
     response = client.post("/predict/")
     assert response.status_code == 422  # Unprocessable Entity due to missing file
 
-@pytest.mark.skip()
+@pytest.mark.skip(reason="Requires valid model and GCS setup")
 def test_post_predict_with_file():
     # create a dummy image file for testing
 
