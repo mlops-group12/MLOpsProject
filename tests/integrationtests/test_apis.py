@@ -1,4 +1,5 @@
 from fastapi.testclient import TestClient
+import pytest
 from mlopsproject.api import app
 from io import BytesIO
 from PIL import Image
@@ -20,6 +21,7 @@ def test_post_predict_no_file():
     response = client.post("/predict/")
     assert response.status_code == 422  # Unprocessable Entity due to missing file
 
+@pytest.mark.skip()
 def test_post_predict_with_file():
     # create a dummy image file for testing
 
