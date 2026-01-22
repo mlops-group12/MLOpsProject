@@ -77,4 +77,3 @@ steps:
 
 options:
   logging: CLOUD_LOGGING_ONLY   # optional, can still log to Cloud Logging
-
