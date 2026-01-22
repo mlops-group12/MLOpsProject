@@ -25,6 +25,22 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         python-version: 3.12
+    
+
+    # ⬇️ Cache uv dependencies
+    - name: Cache uv
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/uv
+          ~\AppData\Local\uv\cache
+        key: >
+          uv-${{ runner.os }}-
+          py${{ matrix.python-version }}-
+          ${{ hashFiles('uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-py${{ matrix.python-version }}-
+
 
     - name: Install dependencies
       run: |
