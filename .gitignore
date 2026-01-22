@@ -208,6 +208,7 @@ __marimo__/
 
 
 # data
+data/
 data/.DS_Store
 data/Angry
 data/fear
