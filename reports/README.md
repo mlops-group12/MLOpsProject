@@ -363,7 +363,12 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 14 fill here ---
+Our configuration file contains several hyperparameters, however in this experiment, we focus on comparing different values for the learning rate and the number of epochs.
+First, we compare training the model using different learning rates, as shown in this [Figure](figures/sweep_lr.png). We evaluate learning rates of $[3×10^{-4},5×10^{-4},7×10^{-4}]$ , all trained for 10 epochs. From the figure, we observe no significant differences in performance among the three learning rates, all of the curves follow echother closly ending with a validation accucarcy at around 0.65 and validation loss just under 0.9. Therefore, when testing the number of epochs, we select the middle learning rate of $5×10^{-4}$. Nevertheless, evaluating the learning rate is important because it determines how efficiently and stably the model learns during training. An inappropriate learning rate can lead to slow convergence or unstable training, even if the model architecture is well chosen.
+
+Next, we examine the number of epochs to identify a “sweet spot” where performance continues to improve without unnecessary additional training that yields no significant gains. As shown in the [Figure](figures/sweep_epoch.png), the performance begins to plateau around step x, which corresponds to approximately x epochs.
+
+In addition to the hyperparameters considered here, one could also investigate other factors, such as batch size or model hyperparameters, including the number of layers or the number of units per layer.
 
 ### Question 15
 
@@ -444,7 +449,7 @@ For our project, we developed separate Dockerfiles for training, evaluation, the
 >
 > Answer:
 
---- question 20 fill here ---
+Our Container registry can be seen in [Figure](figures/registry.png), where we have 4 containers api, evaluate, frontend and train.
 
 ### Question 21
 
@@ -551,7 +556,7 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 27 fill here ---
+Group member s181487 used x, group member s214613 used x, group member s214644 used x and group member s206759 used x. So in total x credits was spend during the course and project.
 
 ### Question 28
 
