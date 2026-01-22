@@ -12,4 +12,3 @@ COPY src src/
 RUN uv sync --locked --no-cache --no-install-project
 
 ENTRYPOINT ["uv", "run", "streamlit", "run", "src/mlopsproject/frontend.py"]
-
