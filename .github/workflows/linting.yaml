@@ -1,0 +1,53 @@
+name: "Workflow for linting"
+
+on:
+  push:
+    branches: [ main, api-test ]
+  pull_request:
+    branches: [ main, api-test ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v5
+
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        python-version: 3.12
+    
+
+    # ⬇️ Cache uv dependencies
+    - name: Cache uv
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cache/uv
+          ~\AppData\Local\uv\cache
+        key: >
+          uv-${{ runner.os }}-
+          py${{ matrix.python-version }}-
+          ${{ hashFiles('uv.lock') }}
+        restore-keys: |
+          uv-${{ runner.os }}-py${{ matrix.python-version }}-
+
+
+    - name: Install dependencies
+      run: |
+        uv sync --dev
+    - name: Cache pre-commit
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pre-commit
+        key: pre-commit-${{ runner.os }}-${{ hashFiles('.pre-commit-config.yaml') }}
+
+    - name: Run pre-commit hooks
+      run: |
+        uv run pre-commit run --all-files
