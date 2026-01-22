@@ -1,0 +1,6 @@
+outs:
+- md5: ebdc04fc2a0224b62c5dab4e75db21bd.dir
+  size: 1064254
+  nfiles: 150
+  hash: md5
+  path: celeba

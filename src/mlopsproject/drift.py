@@ -105,7 +105,7 @@ def sync_gcs_images_to_local_classdir(bucket: str, prefix: str, local_root: str,
 )
 def main(cfg: DictConfig):
     """
-    Run an offline data drift analysis comparing:
+    Run a data drift analysis comparing:
     - Training data (reference)
     - Drift images (local or pulled from GCS) (current)
     """
@@ -167,7 +167,7 @@ def main(cfg: DictConfig):
     report.save_html(output_path)
     print(f"Drift report saved to {output_path}")
 
-    # Optionally upload report to GCS
+    
     if cfg.drift.save_to_gcs:
         if not cfg.gcs.bucket:
             raise ValueError("cfg.gcs.bucket is empty but drift.save_to_gcs=true")

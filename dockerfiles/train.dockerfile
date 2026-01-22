@@ -1,5 +1,7 @@
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
+WORKDIR /app
+
 RUN apt update && \
     apt install --no-install-recommends -y build-essential gcc && \
     apt clean && rm -rf /var/lib/apt/lists/*
@@ -10,7 +12,15 @@ COPY README.md README.md
 COPY src/ src/
 COPY configs /configs
 
+
 RUN uv sync --locked --no-cache --no-install-project
+RUN python -m pip install --no-cache-dir "dvc[gcs]"
+
+COPY .dvc/ .dvc/
+COPY .dvcignore .dvcignore
+COPY data/train_data.dvc data/train_data.dvc
+
+
 
 # Accept timestamp as build argument
 ARG MODEL_TIMESTAMP
@@ -18,4 +28,7 @@ ARG MODEL_TIMESTAMP
 ENV MODEL_TIMESTAMP=${MODEL_TIMESTAMP}
 
 
-ENTRYPOINT ["uv", "run", "python", "-m", "src.mlopsproject.train wandb.enabled=false"]
+COPY dockerfiles/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
