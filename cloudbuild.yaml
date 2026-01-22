@@ -7,7 +7,7 @@ steps:
     [
       'build',
       '-f', 'dockerfiles/train.dockerfile',
-      '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:manual',
+      '-t', 'europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:manual-2',
       '.'
     ]
 
