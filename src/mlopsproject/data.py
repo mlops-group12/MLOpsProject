@@ -25,7 +25,7 @@ def pull_dvc_data():
     if not os.path.isdir(dataset_path):
         raise RuntimeError(
             f"Dataset directory not found at '{dataset_path}'. "
-            "Make sure the dataset is present in the Docker image."
+            "Make sure the dataset is present in the Docker image.",
         )
 
     print(f" Dataset ready at {dataset_path}")
@@ -38,13 +38,15 @@ def get_dataloaders(seed=0, num_workers=4, train_batch_size=64):
     """
     np.random.seed(seed)
 
-    data_transform = transforms.Compose([
-        transforms.Resize((64, 64)),
-        transforms.Grayscale(),
-        transforms.ToTensor(),
-    ])
+    data_transform = transforms.Compose(
+        [
+            transforms.Resize((64, 64)),
+            transforms.Grayscale(),
+            transforms.ToTensor(),
+        ]
+    )
 
-    dataset_path = get_dataset_path()
+    dataset_path = pull_dvc_data()
 
     dataset = datasets.ImageFolder(
         root=dataset_path,
