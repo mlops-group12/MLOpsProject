@@ -368,7 +368,8 @@ Together, model saving, configuration files, and experiment tracking ensured tha
 >
 > Answer:
 
---- question 15 fill here ---
+For our project, we developed separate Dockerfiles for training, evaluation, the API, and the frontend. We build our Docker images via Google Cloud run, which triggers when we push to the main branch of the repo. We used Docker to ensure that our applications can run on any PC, as they run on a virtual machine with the same settings. Here is a link to the GitHub location of our train Dockerfile https://github.com/mlops-group12/MLOpsProject/blob/main/dockerfiles/train.dockerfile. To run the training docker image: "docker run --rm europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest" which will run the latest training file in the google cloud artifact registry.
+ 
 
 ### Question 16
 
