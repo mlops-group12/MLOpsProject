@@ -298,9 +298,17 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
-Currently our continuous integration is build upon doing unittests, integration tests and linting. This is currently all done in the same workflow. This has the advantage of not creating too many virtual environments. However, it could also be considered to split it into multiple virtual machine, such that one test doens't depend on the one before.
+Currently our continuous integration is build upon two different workflows:
+- a pytest workflow
+- a linting workflow
 
-Th
+and we have also added a dependabot workflow to allow for updates to the environment. 
+
+The pytest workflow runs on multiple os systems, specifically ubuntu, windows and macos (the latest available versions).
+
+Both the pytest and linting workflow uses caching to speed up the continuous pipeline.
+
+Here is an example:
 
 
 
