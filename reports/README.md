@@ -98,13 +98,13 @@ will check the repositories and the code to verify your answers.
 ### Week 3
 
 * [ ] Check how robust your model is towards data drifting (M27)
-* [ ] Setup collection of input-output data from your deployed application (M27)
+* [x] Setup collection of input-output data from your deployed application (M27)
 * [ ] Deploy to the cloud a drift detection API (M27)
 * [ ] Instrument your API with a couple of system metrics (M28)
 * [ ] Setup cloud monitoring of your instrumented application (M28)
 * [ ] Create one or more alert systems in GCP to alert you if your app is not behaving correctly (M28)
-* [ ] If applicable, optimize the performance of your data loading using distributed data loading (M29)
-* [ ] If applicable, optimize the performance of your training pipeline by using distributed training (M30)
+* [x] If applicable, optimize the performance of your data loading using distributed data loading (M29)
+* [x] If applicable, optimize the performance of your training pipeline by using distributed training (M30)
 * [ ] Play around with quantization, compilation and pruning for you trained models to increase inference speed (M31)
 
 ### Extra
@@ -227,6 +227,8 @@ Additionally, using a standardized project structure, such as a cookiecutter tem
 >
 > Answer:
 
+We implemented a total of 7 unittests testing different parts of the data and the model. For the data we tested the batchsize after dataloading and the size of the dataset. for the model we tested if the model can run a forward step and each of training, test and validation step. Additionally we tested the optimizer. We also created some implementation tests, testing the dataloading and the frontend API.
+
 test_data.py : Testing the length of the data and that the get_datasets function returns the expected datasets. It also tests for batch shape.
 
 test_model.py : This unittest tests the model framework. This includes testing the shapes after the forward pass, and testing whether or not the training, validation and test step outputs the expected. Finally, the setup is configured to use a single optimizer in the pytorch-lightning framework, so this is also tested for.
@@ -244,6 +246,8 @@ test_model.py : This unittest tests the model framework. This includes testing t
 > *code and even if we were then...*
 >
 > Answer:
+
+we have a total code coverage of 79% but most of the important parts of the code is covered.
 
 --- question 8 fill here ---
 
@@ -313,7 +317,9 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
---- question 12 fill here ---
+We configured experiments using a base_config.yaml file that defines hyperparameters such as the random seed, number of epochs, learning rate and device. Using a config file ensures reproducibility and automatic logging of all settings. The configuration is also integrated with Weights & Biases (wandb), so each run and its parameters are tracked.
+Experiments are run via the command line, with optional overrides, for example: **python -m src.mlopsproject.train wandb.enabled=true**
+
 
 ### Question 13
 
@@ -328,7 +334,9 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
---- question 13 fill here ---
+Reproducibility was ensured by consistently logging both model artifacts and experiment configurations. Each experiment produced a trained model that was saved as a .pt file in a dedicated models file. In this project, we were not focused on comparing multiple hyperparameter configurations, so only the latest model was saved. However, in a setting where model comparison is important, the model filename would include configuration details such as learning rate, seed, or epoch count to avoid information loss.
+To further secure reproducibility, experiments could be run using a fixed base_config.yaml file, ensuring that hyperparameters, random seeds, and device settings remained consistent across runs. When Weights & Biases (wandb) was enabled, all experiment details, including configuration parameters, metrics, and training logs, were automatically tracked and stored. This allows any experiment to be fully reproduced by simply reusing the logged configuration and rerunning the training script with the same settings.
+Together, model saving, configuration files, and experiment tracking ensured that no critical information was lost and that experiments could be reliably reproduced.
 
 ### Question 14
 
@@ -466,7 +474,9 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
---- question 23 fill here ---
+We did manage to write an API for our emotion detection model using FastAPI. The API exposes a simple interface where an image is uploaded and an emotion prediction is returned. The model is loaded once at application startup, which avoids reloading the model for each request and improves performance. To make the deployment more realistic, the trained model is automatically downloaded from Google Cloud Storage (GCS), ensuring that the latest available model is always used.
+For inference, the uploaded image is preprocessed to match the training setup. The image is converted to grayscale, resized to 64×64 pixels, and transformed into a PyTorch tensor before being passed to the model. The predicted emotion is selected as the class with the highest probability.
+We added a GET / endpoint to verify that the API is running and a POST /predict endpoint for performing predictions. Additionally, the API returns the model version used for inference, improving transparency and reproducibility of predictions.
 
 ### Question 24
 
@@ -482,7 +492,7 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
---- question 24 fill here ---
+We managed to deploy our API both locally and in the cloud. The first step was local deployment, where we loaded the model from local files. The next step was loading the model from Google Cloud Storage (GCS), which required some additional setup, but we eventually succeeded. By creating a Dockerfile for the API, we were able to build a container image for our backend and later also for our frontend. Using the Google Cloud interface, we deployed the container to Cloud Run, which created a service and exposed it through a public URL pointing to the API backend. Using this URL and the /docs endpoint, we were able to test our model and run predictions.
 
 ### Question 25
 
