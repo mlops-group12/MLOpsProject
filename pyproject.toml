@@ -43,6 +43,7 @@ dependencies = [
     "uvicorn==0.34.0",
     "wandb>=0.23.1",
     "evidently>=0.7.20",
+    "locust>=2.43.1",
 ]
 
 [dependency-groups]
