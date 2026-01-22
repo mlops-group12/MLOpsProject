@@ -19,15 +19,15 @@ def pull_dvc_data():
         # Pull all DVC-tracked files (including data.dvc)
         subprocess.run(["dvc", "pull"], check=True)
     except subprocess.CalledProcessError:
-        print("⚠️ DVC pull failed. Please check your DVC setup and remotes.")
+        print("DVC pull failed. Please check your DVC setup and remotes.")
 
-    dataset_path = "data"  # path recorded in data.dvc
+    dataset_path = "data/train_data"  # path recorded in data.dvc
     if not os.path.isdir(dataset_path):
         raise RuntimeError(
             f"No valid dataset folder found at {dataset_path} after DVC pull."
         )
 
-    print(f"✅ Dataset ready at {dataset_path}")
+    print(f" Dataset ready at {dataset_path}")
     return dataset_path
 
 
