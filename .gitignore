@@ -226,7 +226,6 @@ outputs/
 
 # wandb
 wandb/
-/data
 
 # Models
 models/
