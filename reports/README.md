@@ -574,7 +574,7 @@ Group member s181487 used x, group member s214613 used x, group member s214644 u
 >
 > Answer:
 
---- question 28 fill here ---
+We successfully implemented a frontend for our API that can run locally, allowing users to upload an image, display it, and receive an emotion prediction. Additionally, we created a Dockerfile for deployment, however, when attempting to deploy it on Google Cloud, we encountered issues that, given the time available, we were unable to resolve.
 
 ### Question 29
 
