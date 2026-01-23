@@ -225,7 +225,7 @@ Additionally, using a standardized project structure, such as a cookiecutter tem
 >
 > Answer:
 
-We implemented a total of 7 unittests testing different parts of the data and the model. For the data we tested the batchsize after dataloading and the size of the dataset. for the model we tested if the model can run a forward step and each of training, test and validation step. Additionally we tested the optimizer. We also created some implementation tests, testing the dataloading and the frontend API.
+We implemented a total of 7 unittests testing different parts of the data and the model.
 
 test_data.py : Testing the length of the data and that the get_datasets function returns the expected datasets. It also tests for batch shape.
 
