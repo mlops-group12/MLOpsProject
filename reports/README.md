@@ -245,7 +245,7 @@ test_model.py : This unittest tests the model framework. This includes testing t
 >
 > Answer:
 
-we have a total code coverage of 79% but most of the important parts of the code is covered.
+We achieved a total code coverage of 79%, which is relatively high and covers most of the critical parts of the codebase. This indicates that many potential error cases are handled and tested. However, as discussed in Question 7, while we test a wide range of aspects, we do not test everything. Therefore, a high code coverage alone does not guarantee correctness. For example, we extensively test data dimensions, shapes, and batch sizes, but we could also test properties of the data itself, such as whether the dataset is unbalanced and dominated by a single emotion class. That being said, there is still room for improvement by implementing additional tests, but even achieving 100% code coverage would not guarantee complete correctness.
 
 ### Question 9
 
