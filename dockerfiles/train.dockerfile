@@ -32,4 +32,3 @@ ENV MODEL_TIMESTAMP=${MODEL_TIMESTAMP}
 COPY dockerfiles/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
-

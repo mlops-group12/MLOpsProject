@@ -10,7 +10,7 @@ import tempfile
 
 
 MODEL_PATH = "models"
-BUCKET = "data-face-emotions"     
+BUCKET = "data-face-emotions"
 
 # -------------------------
 # Initialize Hydra config and help functons
@@ -18,7 +18,7 @@ BUCKET = "data-face-emotions"
 app = FastAPI()
 DB_FILE = "prediction_database.csv"
 MODEL_PATH = "models"
-BUCKET = "data-face-emotions"    
+BUCKET = "data-face-emotions"
 
 
 def extract_image_features(image: Image.Image):
@@ -35,6 +35,7 @@ def extract_image_features(image: Image.Image):
 
     return width, height, brightness, contrast, sharpness
 
+
 def add_to_database(
     now: str,
     image_name: str,
@@ -50,8 +51,9 @@ def add_to_database(
         f.write(
             f"{now},{image_name},{width},{height},"
             f"{brightness:.4f},{contrast:.4f},{sharpness:.4f},"
-            f"{predicted_emotion}\n"
+            f"{predicted_emotion}\n",
         )
+
 
 def load_model_from_gcs():
     model = CNN()
@@ -80,7 +82,6 @@ def load_model_from_gcs():
     model.eval()
 
     return model, model_version
-        
 
 
 @app.on_event("startup")
@@ -89,9 +90,9 @@ def startup_event():
     if not os.path.exists(DB_FILE):
         with open(DB_FILE, "w") as f:
             f.write(
-                "time,image_name,width,height,brightness,contrast,sharpness,"
-                "predicted_emotion\n"
+                "time,image_name,width,height,brightness,contrast,sharpness," "predicted_emotion\n",
             )
+
 
 # -------------------------
 # API endpoints
@@ -100,6 +101,7 @@ def startup_event():
 def read_root():
     """Root endpoint."""
     return {"message": "Welcome to the Face Emotions prediction model inference API!"}
+
 
 @app.post("/predict/")
 async def predict(data: UploadFile = File(...), background_tasks: BackgroundTasks = None):
@@ -138,8 +140,5 @@ async def predict(data: UploadFile = File(...), background_tasks: BackgroundTask
     return {
         "predicted_emotion": predicted_emotion,
         "model_version": model_version,
-        "probs": probs.tolist()
-        }
-
-
-
+        "probs": probs.tolist(),
+    }

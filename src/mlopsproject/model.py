@@ -155,7 +155,7 @@ class CNN(LightningModule):
             optim.Adam: Adam optimizer with the configured learning rate
         """
         return optim.Adam(self.parameters(), lr=self.lr)
-    
+
     def on_test_start(self):
         self.test_preds = []
         self.test_targets = []

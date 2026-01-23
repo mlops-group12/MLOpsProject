@@ -148,7 +148,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
-We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning. 
+We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning.
 
 ## Coding environment
 
@@ -169,10 +169,10 @@ We haven't used third-party frameworks! Our project is build around pytorch and 
 > Answer:
 
 We used uv to manage both our Python environment and project dependencies. This tool provides a consistent and efficient workflow across all team members and ensures that the project can be easily reproduced by others. Dependency versions are recorded in a uv.lock file, which is committed to the GitHub repository. This lock file guarantees that everyone installs the exact same versions of all packages, ensuring reproducibility across systems.
-To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager). 
+To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager).
 
 Alternatively, if using pip, they can install dependencies with pip install -r requirements.txt. The requirements.txt file is created from the uv.lock file using uv export --format requirements.txt, which can also be installed using uv via uv pip install -r requirements.txt.
-New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade. 
+New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade.
 
 ### Question 5
 
@@ -188,9 +188,7 @@ New dependencies can be added using uv add <package-name>. Team members can veri
 >
 > Answer:
 
-We initialized the project using the provided cookiecutter template and followed its overall structure. We populated the main folders, including src, configs, dockerfiles, and tests, while keeping the template’s organization intact. Within the src directory, we added a frontend.py script to handle the api's frontend-related functionality. We also added an evaluate.dockerfile to the dockerfiles directory for evaluation purposes, a base_config file in configs to store shared configuration settings, and integration tests in the tests directory.
-These additions were made to better separate responsibilities within the project, improve readability, and support smoother collaboration among group members by reducing merge conflicts.
-We deviated slightly from the template by removing the data folder. Instead of storing data locally, our src/data.py module loads data directly from Google Cloud Storage as the dataset is too large to be committed to the repository. For reproducibility, we also included functionality in the data loader to download the dataset directly from Kaggle for users who wish to run the project independently.
+We initialized the project using the provided cookiecutter template and followed its overall structure. We populated the main folders, including src, configs, dockerfiles, and tests, while keeping the template’s way of organization intact. We also added an evaluate.dockerfile to the dockerfiles directory for evaluation purposes, a base_config file in configs to store shared configuration settings, and integration tests in the tests directory. These additions were made to better separate responsibilities within the project, improve readability, and support smoother collaboration among group members by reducing merge conflicts. We deviated slightly from the template by keeping the data folder local due to its size. The data is stored in a GCS bucket from which it can be fetched using DVC pull as those are linked.
 
 ### Question 6
 
@@ -205,7 +203,7 @@ We deviated slightly from the template by removing the data folder. Instead of s
 >
 > Answer:
 
-What we implemented: 
+In this project, we implemented code-typing and comments to quickly get an overview of functions.
 
 Following good coding practices is important in larger projects because it improves understandability when reviewing code written by others or when returning to older parts of the project. Since developers often have very individual coding styles, clear structure and documentation help bridge the gap between different approaches and make it easier to understand what specific functions, scripts, or modules are intended to do.
 Additionally, using a standardized project structure, such as a cookiecutter template, helps reduce code duplication and prevents directory-related errors. It furthermore helps maintain an overview of the code structure. Overall, these practices reduce the time and effort required to understand, maintain, and extend code written by others or earlier in the project.
@@ -300,7 +298,7 @@ Currently our continuous integration is build upon two different workflows:
 - a pytest workflow
 - a linting workflow
 
-and we have also added a dependabot workflow to allow for updates to the environment. 
+and we have also added a dependabot workflow to allow for updates to the environment.
 
 The pytest workflow runs on multiple os systems, specifically ubuntu, windows and macos (the latest available versions).
 
@@ -384,7 +382,7 @@ In addition to the hyperparameters considered here, one could also investigate o
 > Answer:
 
 For our project, we developed separate Dockerfiles for training, evaluation, the API, and the frontend. We build our Docker images via Google Cloud run, which triggers when we push to the main branch of the repo. We used Docker to ensure that our applications can run on any PC, as they run on a virtual machine with the same settings. Here is a link to the GitHub location of our train Dockerfile https://github.com/mlops-group12/MLOpsProject/blob/main/dockerfiles/train.dockerfile. To run the training docker image: "docker run --rm europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest" which will run the latest training file in the google cloud artifact registry.
- 
+
 
 ### Question 16
 
@@ -399,7 +397,7 @@ For our project, we developed separate Dockerfiles for training, evaluation, the
 >
 > Answer:
 
-During code development, we inevitably encountered errors and bugs. To minimize their impact, we used error messages and warnings in appropriate places. For example, a ValueError was raised when attempting to load a model that could not be found. Additionally, when errors occurred, as they often do during development, we frequently used print statements to verify that the program was running as expected and to help locate the source of the issue. 
+During code development, we inevitably encountered errors and bugs. To minimize their impact, we used error messages and warnings in appropriate places. For example, a ValueError was raised when attempting to load a model that could not be found. Additionally, when errors occurred, as they often do during development, we frequently used print statements to verify that the program was running as expected and to help locate the source of the issue.
 The [Figure](figures/profile.png) shows the profiling results for our training script. From this, we can identify that the data loader is the most time-consuming task. Although the time per call is relatively low, it is invoked nearly 6,000 times, resulting in a high total runtime. In contrast, saving checkpoints takes roughly twice as long per call, but since it is only executed eight times, it contributes far less to the overall runtime.
 
 
@@ -418,7 +416,7 @@ The [Figure](figures/profile.png) shows the profiling results for our training s
 >
 > Answer:
 
---- question 17 fill here ---
+In our project, we used several Google Cloud Platform services. Vertex AI was used to run the training and evaluation Docker images, providing managed infrastructure for training machine learning models and logging relevant metrics. Cloud Storage Buckets were used to store trained models, evaluation results and other data, allowing us to access and version data through DVC. Artifact Registry stored all Docker images for training, evaluation, API, and frontend, ensuring consistent deployment. Finally, Cloud Build, integrated via GitHub Actions, automatically built Docker images when code was pushed, supporting continuous integration and deployment of all services.
 
 ### Question 18
 
@@ -442,7 +440,7 @@ The [Figure](figures/profile.png) shows the profiling results for our training s
 >
 > Answer:
 
---- question 19 fill here ---
+Our bucket consist of models, data vertex-staging which can be seen in the [Figure](figures/bucket.png).
 
 ### Question 20
 
@@ -541,7 +539,7 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 26 fill here ---
+We have implemented data drift detection, which identifies whether the model can keep up with new types of data (we used the celeba dataset). However on longer term, we set up the system to save new data received through the API, which can then be used for detecting drift later on. While we were not able to implement our own monitoring system, using Cloud Run allowed us to inspect some default metrics. Implementing custom monitoring would definitely be valuable in both the short and long term, as it would help us better understand the model’s behavior. Examining logs is often very informative for understanding application behavior and for diagnosing the root cause of errors. 
 
 ## Overall discussion of project
 
@@ -597,9 +595,9 @@ The [Figure](figures/architecture.png) describe the overall architecture of our 
 
 The central element of our system architecture is the developer, who can choose to work either locally or in the cloud. Locally, the developer can run our face detection model for training or evaluation, both of which are configurable through config files that log the chosen model setup, with optional logging to Weights & Biases (WandB). The output of training is a model that can be used by an API, which connects to a frontend interface where users can upload images and receive emotion predictions.
 
-The given image input details are stored to enable later analysis of data drift 
+The given image input details are stored to enable later analysis of data drift
 
-In the cloud workflow, the developer begins by committing code to GitHub, which triggers GitHub Actions workflows. These workflows first perform unit tests, linting, and integration tests to ensure code quality. If the commit is on the main branch, the workflow continues by building new Docker images, which are stored in the Artifact Registry. The registry contains four images: the training and evaluation images, which run on Vertex AI to create models, logging relevant information to WandB, with the trained models and data stored in a cloud bucket that developers can access using DVC; and the API and frontend images, which can be deployed separately. Once the training is complete, the API image can be deployed with the trained model, providing an endpoint for predictions. After that, the frontend image can be deployed, configured to use the API URL to create an interface where users can upload images and receive emotion predictions. 
+In the cloud workflow, the developer begins by committing code to GitHub, which triggers GitHub Actions workflows. These workflows first perform unit tests, linting, and integration tests to ensure code quality. If the commit is on the main branch, the workflow continues by building new Docker images, which are stored in the Artifact Registry. The registry contains four images: the training and evaluation images, which run on Vertex AI to create models, logging relevant information to WandB, with the trained models and data stored in a cloud bucket that developers can access using DVC; and the API and frontend images, which can be deployed separately. Once the training is complete, the API image can be deployed with the trained model, providing an endpoint for predictions. After that, the frontend image can be deployed, configured to use the API URL to create an interface where users can upload images and receive emotion predictions.
 
 In addition, developers can always choose to clone the GitHub repository to work locally or modify the workflow.
 
@@ -633,4 +631,8 @@ In addition, developers can always choose to clone the GitHub repository to work
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
---- question 31 fill here ---
+Student s181487 has primarily focused on developing the Docker containers and working on data drift detection. They collaborated with student s214613 on setting up DVC and storage management. In addition, s214613 has worked on the Google Cloud setup, including Cloud Build. Student s214644 have been a big part of configuration of the model and evaluation scripts, as well as setting up tests and GitHub Actions. Students s214644 and s206759 worked closely together on configuring the API and frontend. Additionally, s206759 contributed to configuring files and integrating with Weights & Biases (WandB).
+
+That said, all team members have been involved in every part of the project and have contributed equally.
+
+Generative AI was used as a support tool to better understand the concepts behind some modules and to assist in writing parts of the model code.

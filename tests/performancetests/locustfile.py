@@ -1,6 +1,3 @@
-
-import random
-
 from locust import HttpUser, between, task
 
 from io import BytesIO
@@ -20,14 +17,11 @@ class MyUser(HttpUser):
     @task(3)
     def predict(self) -> None:
         """A task that simulates a user visiting a random item URL of the FastAPI app."""
-        img = Image.new('L', (64, 64), color = 'white')
+        img = Image.new("L", (64, 64), color="white")
         img_byte_arr = BytesIO()
-        img.save(img_byte_arr, format='PNG')
+        img.save(img_byte_arr, format="PNG")
         img_byte_arr.seek(0)
 
-        files = {'data': ('test.png', img_byte_arr, 'image/png')}
-        
+        files = {"data": ("test.png", img_byte_arr, "image/png")}
+
         self.client.post("/predict/", files=files)
-
-
-

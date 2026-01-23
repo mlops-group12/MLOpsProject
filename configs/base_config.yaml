@@ -27,7 +27,7 @@ gcs:
   bucket: "data-face-emotions"
   data_folder: "data_train"
   model_folder: "models"
-  use_mounted_path: false          
+  use_mounted_path: false
 
 hydra:
   run:

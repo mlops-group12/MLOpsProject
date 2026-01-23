@@ -8,7 +8,7 @@ This repository contains the implementation for our Machine learning operations 
 | Jacob Borregaard Eriksen | s181487 |
 | Liv Dreyer Johansen | s214613 |
 | Nikolaj Hertz | s214644 |
-| Signe Djernis Olsen | s206759 | 
+| Signe Djernis Olsen | s206759 |
 
 ## The overall architecture of our system
 ![architecture](reports/figures/architecture.png)
@@ -71,9 +71,9 @@ The directory structure of the project looks like this:
 │   ├── integrationtests
 │   │   ├── test_apis.py
 │   │   └── test_integration_model.py
-│   ├── unittests  
+│   ├── unittests
 │   │   ├── test_data.py
-│   │   └── test_model.py              
+│   │   └── test_model.py
 │   └── __init__.py
 ├── wandb/                    # Weight and Biases
 ├── .gitignore

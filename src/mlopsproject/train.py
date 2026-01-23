@@ -75,7 +75,7 @@ def main(cfg: DictConfig):
             group=cfg.wandb.group,
             mode=cfg.wandb.mode,
         )
-        wandb.run.name = f"faces_{run_tag}"
+        wandb.run.name = f"faces_{run_tag}"  # type: ignore
 
     # -------------------------
     # Trainer
@@ -110,13 +110,12 @@ def main(cfg: DictConfig):
             bucket = client.bucket(cfg.gcs.bucket)
 
             blob = bucket.blob(
-                f"{cfg.gcs.model_folder}/model-latest.pt"
+                f"{cfg.gcs.model_folder}/model-latest.pt",
             )
             blob.upload_from_filename(local_model_path)
 
             print(
-                f"Model uploaded to "
-                f"gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model-latest.pt"
+                f"Model uploaded to " f"gs://{cfg.gcs.bucket}/{cfg.gcs.model_folder}/model-latest.pt",
             )
 
         except Exception as e:
