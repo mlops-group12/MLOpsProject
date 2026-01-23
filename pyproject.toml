@@ -45,6 +45,7 @@ dependencies = [
     "evidently>=0.7.20",
     "locust>=2.43.1",
     "types-requests>=2.32.4.20260107",
+    "markdown>=3.10.1",
 ]
 
 [dependency-groups]
