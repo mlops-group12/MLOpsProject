@@ -37,31 +37,23 @@ def main(cfg: DictConfig):
     5. Uploads model to GCS (overwrites)
     """
 
-    # -------------------------
-    # Training parameters
-    # -------------------------
+    
     max_epochs = cfg.epochs
     lr = cfg.lr
 
     print("Starting training job")
     print(f"Epochs: {max_epochs}, LR: {lr}")
 
-    # -------------------------
-    # Data loading
-    # -------------------------
+    
     print("Loading dataset...")
     train_loader, val_loader, _ = get_dataloaders(num_workers=2)
 
-    # -------------------------
-    # Model initialization
-    # -------------------------
+    # initialize model
     model = CNN(learning_rate=lr)
     print("Model initialized")
     print("Device:", model.device)
 
-    # -------------------------
-    # WandB logger
-    # -------------------------
+    # logger for  wandb
     logger = None
     run_tag = os.getenv(
         "MODEL_TIMESTAMP",
@@ -75,25 +67,21 @@ def main(cfg: DictConfig):
             group=cfg.wandb.group,
             mode=cfg.wandb.mode,
         )
-        wandb.run.name = f"faces_{run_tag}"  # type: ignore
+        wandb.run.name = f"faces_{run_tag}"  
 
-    # -------------------------
-    # Trainer
-    # -------------------------
+    # lightning trainer
     trainer = Trainer(
         max_epochs=max_epochs,
         logger=logger,
     )
-
+    # fit model
     trainer.fit(
         model,
         train_dataloaders=train_loader,
         val_dataloaders=val_loader,
     )
 
-    # -------------------------
-    # Save model (latest-only)
-    # -------------------------
+    # save to local path
     local_model_path = "models/model-latest.pt"
     os.makedirs(os.path.dirname(local_model_path), exist_ok=True)
 
@@ -101,9 +89,7 @@ def main(cfg: DictConfig):
         torch.save(model.state_dict(), local_model_path)
         print(f"Model saved locally at {local_model_path}")
 
-    # -------------------------
-    # Upload to GCS (overwrite)
-    # -------------------------
+    # upload to GCS
     if cfg.gcs.bucket and cfg.gcs.model_folder:
         try:
             client = storage.Client(project=cfg.gcs.project)
