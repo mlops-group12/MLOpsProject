@@ -9,28 +9,19 @@ from torchvision import transforms, datasets
 import subprocess
 
 
-def pull_dvc_data():
-    """
-    Pull the DVC-tracked dataset to the path recorded in the repo (data/).
-    Returns the dataset folder path.
-    """
-    print("Pulling dataset via DVC...")
-    try:
-        # Pull all DVC-tracked files (including data.dvc)
+def pull_dvc_data(run_pull=False):
+    if run_pull:
+        print("Pulling dataset via DVC...")
         subprocess.run(["dvc", "pull"], check=True)
-    except subprocess.CalledProcessError:
-        print("DVC pull failed. Please check your DVC setup and remotes.")
 
-    dataset_path = "data/train_data"  # path recorded in data.dvc
+    dataset_path = "train_data"
     if not os.path.isdir(dataset_path):
         raise RuntimeError(
             f"Dataset directory not found at '{dataset_path}'. "
-            "Make sure the dataset is present in the Docker image.",
+            "Run `dvc pull` before training."
         )
 
-    print(f" Dataset ready at {dataset_path}")
     return dataset_path
-
 
 def get_dataloaders(seed=0, num_workers=4, train_batch_size=64):
     """
