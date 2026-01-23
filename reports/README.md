@@ -387,6 +387,8 @@ The pictures:
 
 For our project, we developed separate Dockerfiles for training, evaluation, the API, and the frontend. We build our Docker images via Google Cloud run, which triggers when we push to the main branch of the repo. We used Docker to ensure that our applications can run on any PC, as they run on a virtual machine with the same settings. Here is a link to the GitHub location of our train Dockerfile https://github.com/mlops-group12/MLOpsProject/blob/main/dockerfiles/train.dockerfile. To run the training docker image: "docker run --rm europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest" which will run the latest training file in the google cloud artifact registry.
 
+We futhermore utilized the `cloudbuild.yaml` file to build and push images to the artifact registry for all dockerfiles when pushing to the main branch. As elements were added to the project, the build ran for longer (which was expected) but we at times made use of cloud build files constructed in a manner that only rebuild certain images for less processing time.
+
 
 ### Question 16
 
@@ -625,7 +627,7 @@ In addition, developers can always choose to clone the GitHub repository to work
 
 Git: We did experience some trouble using Git even though branches were set-up for smooth collaboration. The trouble, however, was not due to errors using Git but more due to communication on what branch members were working in/when then committed changes. This was especially prominent when integrating DVC into the project. 
 
-DVC: DVC did cause a significant amount of trouble. It was not possible to set it up during the modules due to Google’s authentication problems. However, we attempted to connect it to the bucket, which worked initially. It was possible to run our training locally using data pulled by dvc, but it caused issues when attempting to execute it using VertexAI. This issue persisted for the last part of the project, and was only solved through meticulous debugging.
+DVC: DVC did cause a significant amount of trouble. It was not possible to set it up during the modules due to Google’s authentication problems. However, we attempted to connect it to the bucket, which worked initially. It was possible to run our training locally using data pulled by dvc, but it caused issues when attempting to execute it using VertexAI. This issue persisted for the last part of the project, and was only solved through meticulous debugging and eventually restarting the process to ensure proper setup and connection to the remote storage.
 
 Front-end API: When launching the api front-end locally, it was possible to upload an image and get a prediction through an UI. However, when building and furthermore deploying the frontend.dockerfile, we were not able to open the URL created by the api script, even when hardcoding the URL into the front-end script. This we did not find a solution to.
 
