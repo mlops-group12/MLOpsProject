@@ -13,10 +13,10 @@ This repository contains the implementation for our Machine learning operations 
 ## How to clone our source code
 To clone our source code and use it to run your own experiments, please follow the following steps:
 
-1) Clone this repository using 'git clone https://github.com/mlops-group12/MLOpsProject.git'. Go in to the cloned repo 'cd MLOpsProject'.
-2) Initialize a virtual environment using 'python3 -m venv .venv'. Optional: deactivate base environment using 'conda deactivate'. Activate your environment 'source .venv/bin/activate'.
-3) Update your environment with the necessary dependencies by 'uv sync'.
-4) Use 'dvc pull' to pull the data down locally on your computer using DVC.
+1) Clone this repository using `git clone https://github.com/mlops-group12/MLOpsProject.git`. Go in to the cloned repo `cd MLOpsProject`.
+2) Initialize a virtual environment using `python3 -m venv .venv`. Optional: deactivate base environment using `conda deactivate`. Activate your environment `source .venv/bin/activate`.
+3) Update your environment with the necessary dependencies using `uv sync`.
+4) Use `dvc pull` to pull the data down locally on your computer using DVC.
 
 ## The overall architecture of our system
 ![architecture](reports/figures/architecture.png)
