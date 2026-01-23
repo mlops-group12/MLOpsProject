@@ -431,7 +431,7 @@ In our project, we used several Google Cloud Platform services. Vertex AI was us
 >
 > Answer:
 
---- question 18 fill here ---
+The Compute Engine is the core infrastructure service of GCP, providing virtual machines that can be used to run workloads on CPUs or GPUs within Google’s cloud infrastructure. We did not directly create or manage any virtual machines in this project. However, when using services such as Cloud Build to build container images and Vertex AI to run training jobs, we indirectly relied on Compute Engine, as these managed services automatically create temporary virtual machines to execute the jobs. We did not configure custom machine types, GPUs, or disks ourselves. By relying on managed services built on top of Compute Engine, we avoided direct infrastructure management while still benefiting from cloud compute resources. If we had managed to successfully deploy our app as a production service then we would also use the compute engine to run the backend processes.
 
 ### Question 19
 
