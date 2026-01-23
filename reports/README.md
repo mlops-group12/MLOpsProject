@@ -294,19 +294,17 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
-Currently our continuous integration is build upon two different workflows:
-- a pytest workflow
-- a linting workflow
+Our continuous integration (CI) setup is based on GitHub Actions and is implemented through multiple workflows to ensure code quality and reliability. Currently, we use two main workflows: a pytest workflow defined in pytest.yaml and a linting workflow defined in linting.yaml.
 
-and we have also added a dependabot workflow to allow for updates to the environment.
+The pytest workflow focuses on automated testing and runs unit tests across multiple environments. Specifically, tests are executed on three different operating systems—Ubuntu, Windows, and macOS (latest versions)—and across three Python versions: 3.10, 3.11, and 3.12. This results in a total of nine parallel build configurations, helping ensure that the code behaves consistently across platforms and Python versions.
 
-The pytest workflow runs on multiple os systems, specifically ubuntu, windows and macos (the latest available versions).
+The linting workflow enforces code quality and style consistency by running static analysis tools. This helps catch potential issues early, such as formatting problems or common programming errors, before code is merged.
 
-Both the pytest and linting workflow uses caching to speed up the continuous pipeline.
+Both workflows make use of dependency caching, which significantly reduces execution time by reusing previously installed Python packages between workflow runs. This improves the efficiency of the CI pipeline and shortens feedback loops for developers.
 
-Here is an example:
+In addition, we use Dependabot, which runs weekly and automatically creates pull requests suggesting updates to project dependencies. This helps keep the project secure and up to date while reducing manual maintenance effort.
 
-
+Overall, this CI setup provides automated testing, code quality checks, cross-platform validation, and dependency management, ensuring a robust and maintainable development workflow.
 
 ## Running code and tracking experiments
 
@@ -533,7 +531,13 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 25 fill here ---
+For unittesting the API we initially made three very simple tests, which checks that the API returns the expected result at both known (e.g. the root ‘/‘) and unknown GET calls.
+
+Then we had a test checking the ‘/predict/‘ POST call. This involved creating an hypothetical image, and testing whether or not the API returns a prediction.
+
+It was also the plan to test whether or not the application handled cases where the user uploads files in an unsupported format. Then the test would explore if it returns the expected error.
+
+We load tested the predict part of the API by using Locust. This gave us an idea of the latency expected from the user perspective and how often it failed.
 
 ### Question 26
 
