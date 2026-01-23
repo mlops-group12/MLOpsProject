@@ -294,19 +294,17 @@ DVC was included in this project as a learning tool rather than for its function
 >
 > Answer:
 
-Currently our continuous integration is build upon two different workflows:
-- a pytest workflow
-- a linting workflow
+Our continuous integration (CI) setup is based on GitHub Actions and is implemented through multiple workflows to ensure code quality and reliability. Currently, we use two main workflows: a pytest workflow defined in pytest.yaml and a linting workflow defined in linting.yaml.
 
-and we have also added a dependabot workflow to allow for updates to the environment.
+The pytest workflow focuses on automated testing and runs unit tests across multiple environments. Specifically, tests are executed on three different operating systems—Ubuntu, Windows, and macOS (latest versions)—and across three Python versions: 3.10, 3.11, and 3.12. This results in a total of nine parallel build configurations, helping ensure that the code behaves consistently across platforms and Python versions.
 
-The pytest workflow runs on multiple os systems, specifically ubuntu, windows and macos (the latest available versions).
+The linting workflow enforces code quality and style consistency by running static analysis tools. This helps catch potential issues early, such as formatting problems or common programming errors, before code is merged.
 
-Both the pytest and linting workflow uses caching to speed up the continuous pipeline.
+Both workflows make use of dependency caching, which significantly reduces execution time by reusing previously installed Python packages between workflow runs. This improves the efficiency of the CI pipeline and shortens feedback loops for developers.
 
-Here is an example:
+In addition, we use Dependabot, which runs weekly and automatically creates pull requests suggesting updates to project dependencies. This helps keep the project secure and up to date while reducing manual maintenance effort.
 
-
+Overall, this CI setup provides automated testing, code quality checks, cross-platform validation, and dependency management, ensuring a robust and maintainable development workflow.
 
 ## Running code and tracking experiments
 
@@ -368,6 +366,10 @@ Next, we examine the number of epochs to identify a “sweet spot” where perfo
 
 In addition to the hyperparameters considered here, one could also investigate other factors, such as batch size or model hyperparameters, including the number of layers or the number of units per layer.
 
+The pictures:
+![Figure](figures/sweep_lr.png)
+![Figure](figures/sweep_epoch.png)
+
 ### Question 15
 
 > **Docker is an important tool for creating containerized applications. Explain how you used docker in your**
@@ -382,6 +384,8 @@ In addition to the hyperparameters considered here, one could also investigate o
 > Answer:
 
 For our project, we developed separate Dockerfiles for training, evaluation, the API, and the frontend. We build our Docker images via Google Cloud run, which triggers when we push to the main branch of the repo. We used Docker to ensure that our applications can run on any PC, as they run on a virtual machine with the same settings. Here is a link to the GitHub location of our train Dockerfile https://github.com/mlops-group12/MLOpsProject/blob/main/dockerfiles/train.dockerfile. To run the training docker image: "docker run --rm europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest" which will run the latest training file in the google cloud artifact registry.
+
+We futhermore utilized the `cloudbuild.yaml` file to build and push images to the artifact registry for all dockerfiles when pushing to the main branch. As elements were added to the project, the build ran for longer (which was expected) but we at times made use of cloud build files constructed in a manner that only rebuild certain images for less processing time.
 
 
 ### Question 16
@@ -440,7 +444,8 @@ The Compute Engine is the core infrastructure service of GCP, providing virtual 
 >
 > Answer:
 
-Our bucket consist of models, data vertex-staging which can be seen in the [Figure](figures/bucket.png).
+Our bucket consist of models, data vertex-staging which can be seen in the following Figure.
+![Figure](figures/bucket.png)
 
 ### Question 20
 
@@ -449,7 +454,8 @@ Our bucket consist of models, data vertex-staging which can be seen in the [Figu
 >
 > Answer:
 
-Our Container registry can be seen in [Figure](figures/registry.png), where we have 4 containers api, evaluate, frontend and train.
+Our Container registry can be seen in the following Figure, where we have 4 containers api, evaluate, frontend and train.
+![Figure](figures/registry.png)
 
 ### Question 21
 
@@ -458,7 +464,8 @@ Our Container registry can be seen in [Figure](figures/registry.png), where we h
 >
 > Answer:
 
-In the [Figure](figures/build.png) we show the latest build, some that failed but most succed.
+In the the following Figure we show the latest build, some that failed but most succed.
+![Figure](figures/build.png)
 
 ### Question 22
 
@@ -524,7 +531,13 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 25 fill here ---
+For unittesting the API we initially made three very simple tests, which checks that the API returns the expected result at both known (e.g. the root ‘/‘) and unknown GET calls.
+
+Then we had a test checking the ‘/predict/‘ POST call. This involved creating an hypothetical image, and testing whether or not the API returns a prediction.
+
+It was also the plan to test whether or not the application handled cases where the user uploads files in an unsupported format. Then the test would explore if it returns the expected error.
+
+We load tested the predict part of the API by using Locust. This gave us an idea of the latency expected from the user perspective and how often it failed.
 
 ### Question 26
 
@@ -593,7 +606,8 @@ We successfully implemented a frontend for our API that can run locally, allowin
 >
 > Answer:
 
-The [Figure](figures/architecture.png) describe the overall architecture of our system.
+![Figure](figures/architecture.png)
+The Figure describe the overall architecture of our system.
 
 The central element of our system architecture is the developer, who can choose to work either locally or in the cloud. Locally, the developer can run our face detection model for training or evaluation, both of which are configurable through config files that log the chosen model setup, with optional logging to Weights & Biases (WandB). The output of training is a model that can be used by an API, which connects to a frontend interface where users can upload images and receive emotion predictions.
 
@@ -617,7 +631,7 @@ In addition, developers can always choose to clone the GitHub repository to work
 
 Git: We did experience some trouble using Git even though branches were set-up for smooth collaboration. The trouble, however, was not due to errors using Git but more due to communication on what branch members were working in/when then committed changes. This was especially prominent when integrating DVC into the project. 
 
-DVC: DVC did cause a significant amount of trouble. It was not possible to set it up during the modules due to Google’s authentication problems. However, we attempted to connect it to the bucket, which worked initially. It was possible to run our training locally using data pulled by dvc, but it caused issues when attempting to execute it using VertexAI. This issue persisted for the last part of the project, and was only solved through meticulous debugging.
+DVC: DVC did cause a significant amount of trouble. It was not possible to set it up during the modules due to Google’s authentication problems. However, we attempted to connect it to the bucket, which worked initially. It was possible to run our training locally using data pulled by dvc, but it caused issues when attempting to execute it using VertexAI. This issue persisted for the last part of the project, and was only solved through meticulous debugging and eventually restarting the process to ensure proper setup and connection to the remote storage.
 
 Front-end API: When launching the api front-end locally, it was possible to upload an image and get a prediction through an UI. However, when building and furthermore deploying the frontend.dockerfile, we were not able to open the URL created by the api script, even when hardcoding the URL into the front-end script. This we did not find a solution to.
 
