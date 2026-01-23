@@ -558,7 +558,9 @@ We have implemented data drift detection, which identifies whether the model can
 >
 > Answer:
 
-Group member s181487 used x, group member s214613 used x, group member s214644 used x and group member s206759 used x. So in total x credits was spend during the course and project.
+We ended up spending around 3$ (2.9 as of now), and can see through the reports that the cloud storage and compute engine are the services with the highest credit spending. 
+
+It is very clear to see the functionality of working in the cloud, but it is also apparent that it is a learning curve. Learning more about the services in the cloud throughout the course of course contributed to a more completed project, but it did include re-iterations of many functions when learning and adding new puzzle pieces. It is however definitely a skill that will prove useful in larger projects and later if working in the industry. 
 
 ### Question 28
 
