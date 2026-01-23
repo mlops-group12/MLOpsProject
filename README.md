@@ -29,21 +29,18 @@ The Convolutional Neural Network will be based on common computer vision princip
 
 The directory structure of the project looks like this:
 ```txt
+├── .dvc/                     # dvc folder
 ├── .github/                  # Github actions and dependabot
 │   ├── dependabot.yaml
 │   └── workflows/
 │       └── tests.yaml
+├── celeba/                   # dataset for data drifting tests
 ├── configs/                  # Configuration files
 │   ├── base_config.yaml
 │   └── drift_config.yaml
-├── data/                     # Data directory
-│   ├── Angry
-│   ├── Fear
-│   ├── Happy
-│   ├── Sad
-│   └── Surprise
 ├── dockerfiles/              # Dockerfiles
 │   ├── api.Dockerfile
+│   ├── entrypoint.sh
 │   ├── evaluate.Dockerfile
 │   ├── frontend.Dockerfile
 │   └── train.Dockerfile
@@ -56,7 +53,7 @@ The directory structure of the project looks like this:
 │   ├── figures/
 │   └── README.md
 ├── src/                      # Source code
-│   ├── project_name/
+│   ├── mlopsproject/
 │   │   ├── __init__.py
 │   │   ├── api.py
 │   │   ├── data.py
@@ -71,19 +68,31 @@ The directory structure of the project looks like this:
 │   ├── integrationtests
 │   │   ├── test_apis.py
 │   │   └── test_integration_model.py
+│   ├── performancetests
+│   │   └── locustfile.py
 │   ├── unittests
 │   │   ├── test_data.py
 │   │   └── test_model.py
 │   └── __init__.py
+├── train_data/                     # Data directory
+│   ├── Angry
+│   ├── Fear
+│   ├── Happy
+│   ├── Sad
+│   └── Surprise
 ├── wandb/                    # Weight and Biases
+├── .dvcignore
 ├── .gitignore
 ├── .pre-commit-config.yaml
+├── celeba.dvc                # data drift dataset metafile from dvc
+├── cloudbuild.yaml           # Build images
 ├── LICENSE
+├── profile.prof              # profiling report
 ├── pyproject.toml            # Python project file
 ├── README.md                 # Project README
-├── requirements.txt          # Project requirements
-├── requirements_dev.txt      # Development requirements
-└── tasks.py                  # Project tasks
+├── tasks.py                  # Project tasks
+├── train_data.dvc            # train dataset metafile from dvc
+└── uv.lock                   # Project requirements
 ```
 
 
