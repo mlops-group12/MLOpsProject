@@ -46,6 +46,7 @@ dependencies = [
     "locust>=2.43.1",
     "types-requests>=2.32.4.20260107",
     "markdown>=3.10.1",
+    "loguru>=0.7.3",
 ]
 
 [dependency-groups]

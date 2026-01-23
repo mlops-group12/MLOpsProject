@@ -368,6 +368,10 @@ Next, we examine the number of epochs to identify a “sweet spot” where perfo
 
 In addition to the hyperparameters considered here, one could also investigate other factors, such as batch size or model hyperparameters, including the number of layers or the number of units per layer.
 
+The pictures:
+![Figure](figures/sweep_lr.png)
+![Figure](figures/sweep_epoch.png)
+
 ### Question 15
 
 > **Docker is an important tool for creating containerized applications. Explain how you used docker in your**
@@ -440,7 +444,8 @@ The Compute Engine is the core infrastructure service of GCP, providing virtual 
 >
 > Answer:
 
-Our bucket consist of models, data vertex-staging which can be seen in the [Figure](figures/bucket.png).
+Our bucket consist of models, data vertex-staging which can be seen in the following Figure.
+![Figure](figures/bucket.png)
 
 ### Question 20
 
@@ -449,7 +454,8 @@ Our bucket consist of models, data vertex-staging which can be seen in the [Figu
 >
 > Answer:
 
-Our Container registry can be seen in [Figure](figures/registry.png), where we have 4 containers api, evaluate, frontend and train.
+Our Container registry can be seen in the following Figure, where we have 4 containers api, evaluate, frontend and train.
+![Figure](figures/registry.png)
 
 ### Question 21
 
@@ -458,7 +464,8 @@ Our Container registry can be seen in [Figure](figures/registry.png), where we h
 >
 > Answer:
 
-In the [Figure](figures/build.png) we show the latest build, some that failed but most succed.
+In the the following Figure we show the latest build, some that failed but most succed.
+![Figure](figures/build.png)
 
 ### Question 22
 
@@ -593,7 +600,8 @@ We successfully implemented a frontend for our API that can run locally, allowin
 >
 > Answer:
 
-The [Figure](figures/architecture.png) describe the overall architecture of our system.
+![Figure](figures/architecture.png)
+The Figure describe the overall architecture of our system.
 
 The central element of our system architecture is the developer, who can choose to work either locally or in the cloud. Locally, the developer can run our face detection model for training or evaluation, both of which are configurable through config files that log the chosen model setup, with optional logging to Weights & Biases (WandB). The output of training is a model that can be used by an API, which connects to a frontend interface where users can upload images and receive emotion predictions.
 
