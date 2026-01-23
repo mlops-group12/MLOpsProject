@@ -1,10 +1,3 @@
-"""
-Data Drift Evaluation Module
-
-This module evaluates robustness to data drift by comparing feature distributions
-between the training dataset and a simulated drifted dataset.
-"""
-
 import os
 import subprocess
 import numpy as np
@@ -14,12 +7,9 @@ from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from torchvision import datasets, transforms
 import shutil
-
 from evidently.legacy.metrics import DataDriftTable
 from evidently.legacy.report import Report
-
 from mlopsproject.data import get_dataloaders
-
 try:
     from google.cloud import storage
 except Exception:
@@ -95,10 +85,12 @@ def sync_gcs_images_to_local_classdir(bucket: str, prefix: str, local_root: str,
     version_base=None,
 )
 def main(cfg: DictConfig):
+
     """
-    Run a data drift analysis comparing:
-    - Training data (reference)
-    - Drift images (local or pulled from GCS) (current)
+    Data Drift Evaluation Module
+
+    This module evaluates robustness to data drift by comparing feature distributions
+    between the training dataset and a simulated drifted dataset.
     """
 
     train_loader, _, _ = get_dataloaders(num_workers=2)

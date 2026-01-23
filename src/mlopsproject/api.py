@@ -9,12 +9,6 @@ import os
 import tempfile
 
 
-MODEL_PATH = "models"
-BUCKET = "data-face-emotions"
-
-# -------------------------
-# Initialize Hydra config and help functons
-# -------------------------
 app = FastAPI()
 DB_FILE = "prediction_database.csv"
 MODEL_PATH = "models"
@@ -94,9 +88,6 @@ def startup_event():
             )
 
 
-# -------------------------
-# API endpoints
-# -------------------------
 @app.get("/")
 def read_root():
     """Root endpoint."""

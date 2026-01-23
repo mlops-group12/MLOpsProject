@@ -11,17 +11,13 @@ import os
 import sys
 import tempfile
 import torch
-
 from mlopsproject.model import CNN
 from mlopsproject.data import get_dataloaders
 from mlopsproject.visualize import plot_confusion_matrix
-
 from pytorch_lightning import Trainer
 import pytorch_lightning as pl
-
 import hydra
 from omegaconf import DictConfig
-
 from google.cloud import storage
 import matplotlib.pyplot as plt
 
@@ -37,21 +33,12 @@ def main(cfg: DictConfig):
     """
 
     print("Starting evaluation job")
-
-    # -------------------------
-    # Load test data
-    # -------------------------
     print("Loading dataset...")
+
+    #load test data
     _, _, test_loader = get_dataloaders(num_workers=2)
 
-    # -------------------------
-    # Initialize model
-    # -------------------------
     model = CNN()
-
-    # -------------------------
-    # WandB logger
-    # -------------------------
     logger = None
     if cfg.wandb.enabled:
         logger = pl.loggers.WandbLogger(
@@ -61,11 +48,9 @@ def main(cfg: DictConfig):
             mode=cfg.wandb.mode,
         )
         logger.experiment.name = "faces_evaluation"
-
-    # -------------------------
-    # Load model (local first, then GCS)
-    # -------------------------
     local_model_path = "models/model-latest.pt"
+
+    # flag to track if model was loaded locally or from GCS
     model_loaded = False
 
     if os.path.exists(local_model_path):
@@ -102,21 +87,17 @@ def main(cfg: DictConfig):
         print("No model available for evaluation")
         sys.exit(1)
 
-    # -------------------------
-    # Evaluate
-    # -------------------------
     trainer = Trainer(logger=logger)
     trainer.test(model, dataloaders=test_loader)
 
-    # -------------------------
-    # Confusion matrix
-    # -------------------------
+    
+    # plotting
     preds = torch.cat(model.test_preds)
     targets = torch.cat(model.test_targets)
 
     class_names = ["angry", "fear", "happy", "sad", "surprise"]
 
-    # Raw confusion matrix
+    # confusion matrix of test results
     fig_raw = plot_confusion_matrix(
         preds,
         targets,
@@ -127,7 +108,7 @@ def main(cfg: DictConfig):
     if cfg.wandb.enabled and logger is not None:
         import wandb
 
-        wandb.log({"confusion_matrix_raw": wandb.Image(fig_raw)})  # type: ignore
+        wandb.log({"confusion_matrix_raw": wandb.Image(fig_raw)})  
 
     plt.close(fig_raw)
 
@@ -142,7 +123,7 @@ def main(cfg: DictConfig):
     if cfg.wandb.enabled and logger is not None:
         import wandb
 
-        wandb.log({"confusion_matrix_normalized": wandb.Image(fig_norm)})  # type: ignore
+        wandb.log({"confusion_matrix_normalized": wandb.Image(fig_norm)})  
 
     plt.close(fig_norm)
 
