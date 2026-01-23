@@ -236,3 +236,4 @@ models/
 
 lightning_logs/
 /temp_data_test
+/train_data
