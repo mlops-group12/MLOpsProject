@@ -43,7 +43,7 @@ def get_dataloaders(seed=0, num_workers=4, train_batch_size=64):
             transforms.Resize((64, 64)),
             transforms.Grayscale(),
             transforms.ToTensor(),
-        ]
+        ],
     )
 
     dataset_path = pull_dvc_data()

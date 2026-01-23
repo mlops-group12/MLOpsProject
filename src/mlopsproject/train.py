@@ -75,7 +75,7 @@ def main(cfg: DictConfig):
             group=cfg.wandb.group,
             mode=cfg.wandb.mode,
         )
-        wandb.run.name = f"faces_{run_tag}"
+        wandb.run.name = f"faces_{run_tag}"  # type: ignore
 
     # -------------------------
     # Trainer

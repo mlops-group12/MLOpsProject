@@ -127,7 +127,7 @@ def main(cfg: DictConfig):
     if cfg.wandb.enabled and logger is not None:
         import wandb
 
-        wandb.log({"confusion_matrix_raw": wandb.Image(fig_raw)})
+        wandb.log({"confusion_matrix_raw": wandb.Image(fig_raw)})  # type: ignore
 
     plt.close(fig_raw)
 
@@ -142,7 +142,7 @@ def main(cfg: DictConfig):
     if cfg.wandb.enabled and logger is not None:
         import wandb
 
-        wandb.log({"confusion_matrix_normalized": wandb.Image(fig_norm)})
+        wandb.log({"confusion_matrix_normalized": wandb.Image(fig_norm)})  # type: ignore
 
     plt.close(fig_norm)
 
