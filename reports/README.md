@@ -188,9 +188,7 @@ New dependencies can be added using uv add <package-name>. Team members can veri
 >
 > Answer:
 
-We initialized the project using the provided cookiecutter template and followed its overall structure. We populated the main folders, including src, configs, dockerfiles, and tests, while keeping the template’s organization intact. Within the src directory, we added a frontend.py script to handle the api's frontend-related functionality. We also added an evaluate.dockerfile to the dockerfiles directory for evaluation purposes, a base_config file in configs to store shared configuration settings, and integration tests in the tests directory.
-These additions were made to better separate responsibilities within the project, improve readability, and support smoother collaboration among group members by reducing merge conflicts.
-We deviated slightly from the template by removing the data folder. Instead of storing data locally, our src/data.py module loads data directly from Google Cloud Storage as the dataset is too large to be committed to the repository. For reproducibility, we also included functionality in the data loader to download the dataset directly from Kaggle for users who wish to run the project independently.
+We initialized the project using the provided cookiecutter template and followed its overall structure. We populated the main folders, including src, configs, dockerfiles, and tests, while keeping the template’s way of organization intact. We also added an evaluate.dockerfile to the dockerfiles directory for evaluation purposes, a base_config file in configs to store shared configuration settings, and integration tests in the tests directory. These additions were made to better separate responsibilities within the project, improve readability, and support smoother collaboration among group members by reducing merge conflicts. We deviated slightly from the template by keeping the data folder local due to its size. The data is stored in a GCS bucket from which it can be fetched using DVC pull as those are linked.
 
 ### Question 6
 
@@ -205,7 +203,7 @@ We deviated slightly from the template by removing the data folder. Instead of s
 >
 > Answer:
 
-What we implemented:
+In this project, we implemented code-typing and comments to quickly get an overview of functions.
 
 Following good coding practices is important in larger projects because it improves understandability when reviewing code written by others or when returning to older parts of the project. Since developers often have very individual coding styles, clear structure and documentation help bridge the gap between different approaches and make it easier to understand what specific functions, scripts, or modules are intended to do.
 Additionally, using a standardized project structure, such as a cookiecutter template, helps reduce code duplication and prevents directory-related errors. It furthermore helps maintain an overview of the code structure. Overall, these practices reduce the time and effort required to understand, maintain, and extend code written by others or earlier in the project.
@@ -418,7 +416,7 @@ The [Figure](figures/profile.png) shows the profiling results for our training s
 >
 > Answer:
 
---- question 17 fill here ---
+In our project, we used several Google Cloud Platform services. Vertex AI was used to run the training and evaluation Docker images, providing managed infrastructure for training machine learning models and logging relevant metrics. Cloud Storage Buckets were used to store trained models, evaluation results and other data, allowing us to access and version data through DVC. Artifact Registry stored all Docker images for training, evaluation, API, and frontend, ensuring consistent deployment. Finally, Cloud Build, integrated via GitHub Actions, automatically built Docker images when code was pushed, supporting continuous integration and deployment of all services.
 
 ### Question 18
 
@@ -442,7 +440,7 @@ The [Figure](figures/profile.png) shows the profiling results for our training s
 >
 > Answer:
 
---- question 19 fill here ---
+Our bucket consist of models, data vertex-staging which can be seen in the [Figure](figures/bucket.png).
 
 ### Question 20
 
@@ -541,7 +539,7 @@ We managed to deploy our API both locally and in the cloud. The first step was l
 >
 > Answer:
 
---- question 26 fill here ---
+We have implemented data drift detection, which identifies whether the model can keep up with new types of data (we used the celeba dataset). However on longer term, we set up the system to save new data received through the API, which can then be used for detecting drift later on. While we were not able to implement our own monitoring system, using Cloud Run allowed us to inspect some default metrics. Implementing custom monitoring would definitely be valuable in both the short and long term, as it would help us better understand the model’s behavior. Examining logs is often very informative for understanding application behavior and for diagnosing the root cause of errors. 
 
 ## Overall discussion of project
 
@@ -633,4 +631,8 @@ In addition, developers can always choose to clone the GitHub repository to work
 > *We have used ChatGPT to help debug our code. Additionally, we used GitHub Copilot to help write some of our code.*
 > Answer:
 
---- question 31 fill here ---
+Student s181487 has primarily focused on developing the Docker containers and working on data drift detection. They collaborated with student s214613 on setting up DVC and storage management. In addition, s214613 has worked on the Google Cloud setup, including Cloud Build. Student s214644 have been a big part of configuration of the model and evaluation scripts, as well as setting up tests and GitHub Actions. Students s214644 and s206759 worked closely together on configuring the API and frontend. Additionally, s206759 contributed to configuring files and integrating with Weights & Biases (WandB).
+
+That said, all team members have been involved in every part of the project and have contributed equally.
+
+Generative AI was used as a support tool to better understand the concepts behind some modules and to assist in writing parts of the model code.
