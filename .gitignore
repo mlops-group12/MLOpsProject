@@ -208,6 +208,10 @@ __marimo__/
 
 
 # data
+data/
+!data/*.dvc
+!data/.gitignore
+
 data/.DS_Store
 data/Angry
 data/fear
@@ -226,11 +230,11 @@ outputs/
 
 # wandb
 wandb/
-/data
 
 # Models
 models/
 
 lightning_logs/
 /temp_data_test
-.dvc/
+/train_data
+/celeba

@@ -2,9 +2,9 @@ name: "Workflow for pytest"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, api-test ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, api-test ]
 
 jobs:
   build:
@@ -13,7 +13,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix: 
+      matrix:
         os: ["ubuntu-latest", "windows-latest", "macos-latest"]
         python-version: ["3.10", "3.11", "3.12"]
 
@@ -25,7 +25,7 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         python-version: 3.12
-    
+
 
     # ⬇️ Cache uv dependencies
     - name: Cache uv

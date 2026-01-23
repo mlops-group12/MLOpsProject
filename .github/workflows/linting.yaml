@@ -2,9 +2,9 @@ name: "Workflow for linting"
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, api-test ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, api-test ]
 
 jobs:
   build:
@@ -22,7 +22,7 @@ jobs:
       uses: astral-sh/setup-uv@v7
       with:
         python-version: 3.12
-    
+
 
     # ⬇️ Cache uv dependencies
     - name: Cache uv

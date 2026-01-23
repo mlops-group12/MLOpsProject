@@ -148,7 +148,7 @@ will check the repositories and the code to verify your answers.
 >
 > Answer:
 
-We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning. 
+We haven't used third-party frameworks! Our project is build around pytorch and pytorch-lightning.
 
 ## Coding environment
 
@@ -169,10 +169,10 @@ We haven't used third-party frameworks! Our project is build around pytorch and 
 > Answer:
 
 We used uv to manage both our Python environment and project dependencies. This tool provides a consistent and efficient workflow across all team members and ensures that the project can be easily reproduced by others. Dependency versions are recorded in a uv.lock file, which is committed to the GitHub repository. This lock file guarantees that everyone installs the exact same versions of all packages, ensuring reproducibility across systems.
-To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager). 
+To get an identical development environment, a new team member simply needs to clone the repository and run uv sync, which installs all dependencies based on the lock file (given they have installed and are using uv as their package/env manager).
 
 Alternatively, if using pip, they can install dependencies with pip install -r requirements.txt. The requirements.txt file is created from the uv.lock file using uv export --format requirements.txt, which can also be installed using uv via uv pip install -r requirements.txt.
-New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade. 
+New dependencies can be added using uv add <package-name>. Team members can verify that the lock file is up to date with uv lock --check, and update dependency versions when necessary using uv lock --upgrade.
 
 ### Question 5
 
@@ -298,7 +298,7 @@ Currently our continuous integration is build upon two different workflows:
 - a pytest workflow
 - a linting workflow
 
-and we have also added a dependabot workflow to allow for updates to the environment. 
+and we have also added a dependabot workflow to allow for updates to the environment.
 
 The pytest workflow runs on multiple os systems, specifically ubuntu, windows and macos (the latest available versions).
 
@@ -382,7 +382,7 @@ In addition to the hyperparameters considered here, one could also investigate o
 > Answer:
 
 For our project, we developed separate Dockerfiles for training, evaluation, the API, and the frontend. We build our Docker images via Google Cloud run, which triggers when we push to the main branch of the repo. We used Docker to ensure that our applications can run on any PC, as they run on a virtual machine with the same settings. Here is a link to the GitHub location of our train Dockerfile https://github.com/mlops-group12/MLOpsProject/blob/main/dockerfiles/train.dockerfile. To run the training docker image: "docker run --rm europe-west1-docker.pkg.dev/active-premise-484209-h0/my-container-repo/train:latest" which will run the latest training file in the google cloud artifact registry.
- 
+
 
 ### Question 16
 
@@ -397,7 +397,7 @@ For our project, we developed separate Dockerfiles for training, evaluation, the
 >
 > Answer:
 
-During code development, we inevitably encountered errors and bugs. To minimize their impact, we used error messages and warnings in appropriate places. For example, a ValueError was raised when attempting to load a model that could not be found. Additionally, when errors occurred, as they often do during development, we frequently used print statements to verify that the program was running as expected and to help locate the source of the issue. 
+During code development, we inevitably encountered errors and bugs. To minimize their impact, we used error messages and warnings in appropriate places. For example, a ValueError was raised when attempting to load a model that could not be found. Additionally, when errors occurred, as they often do during development, we frequently used print statements to verify that the program was running as expected and to help locate the source of the issue.
 The [Figure](figures/profile.png) shows the profiling results for our training script. From this, we can identify that the data loader is the most time-consuming task. Although the time per call is relatively low, it is invoked nearly 6,000 times, resulting in a high total runtime. In contrast, saving checkpoints takes roughly twice as long per call, but since it is only executed eight times, it contributes far less to the overall runtime.
 
 
@@ -595,9 +595,9 @@ The [Figure](figures/architecture.png) describe the overall architecture of our 
 
 The central element of our system architecture is the developer, who can choose to work either locally or in the cloud. Locally, the developer can run our face detection model for training or evaluation, both of which are configurable through config files that log the chosen model setup, with optional logging to Weights & Biases (WandB). The output of training is a model that can be used by an API, which connects to a frontend interface where users can upload images and receive emotion predictions.
 
-The given image input details are stored to enable later analysis of data drift 
+The given image input details are stored to enable later analysis of data drift
 
-In the cloud workflow, the developer begins by committing code to GitHub, which triggers GitHub Actions workflows. These workflows first perform unit tests, linting, and integration tests to ensure code quality. If the commit is on the main branch, the workflow continues by building new Docker images, which are stored in the Artifact Registry. The registry contains four images: the training and evaluation images, which run on Vertex AI to create models, logging relevant information to WandB, with the trained models and data stored in a cloud bucket that developers can access using DVC; and the API and frontend images, which can be deployed separately. Once the training is complete, the API image can be deployed with the trained model, providing an endpoint for predictions. After that, the frontend image can be deployed, configured to use the API URL to create an interface where users can upload images and receive emotion predictions. 
+In the cloud workflow, the developer begins by committing code to GitHub, which triggers GitHub Actions workflows. These workflows first perform unit tests, linting, and integration tests to ensure code quality. If the commit is on the main branch, the workflow continues by building new Docker images, which are stored in the Artifact Registry. The registry contains four images: the training and evaluation images, which run on Vertex AI to create models, logging relevant information to WandB, with the trained models and data stored in a cloud bucket that developers can access using DVC; and the API and frontend images, which can be deployed separately. Once the training is complete, the API image can be deployed with the trained model, providing an endpoint for predictions. After that, the frontend image can be deployed, configured to use the API URL to create an interface where users can upload images and receive emotion predictions.
 
 In addition, developers can always choose to clone the GitHub repository to work locally or modify the workflow.
 

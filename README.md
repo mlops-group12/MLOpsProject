@@ -71,9 +71,9 @@ The directory structure of the project looks like this:
 │   ├── integrationtests
 │   │   ├── test_apis.py
 │   │   └── test_integration_model.py
-│   ├── unittests  
+│   ├── unittests
 │   │   ├── test_data.py
-│   │   └── test_model.py              
+│   │   └── test_model.py
 │   └── __init__.py
 ├── wandb/                    # Weight and Biases
 ├── .gitignore

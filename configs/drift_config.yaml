@@ -23,6 +23,6 @@ drift:
   report_name: "celeba_drift"
   output_dir: "reports/drift"
 
-  
+
   max_batches: 150
   celeba_root: "data/celeba"
